@@ -1,0 +1,191 @@
+#include "llcp_lib.h"
+#include "main.h"
+#include <string.h>
+#include "ICM20602.h"
+#include "llcp.h"
+#include <stdbool.h>
+
+#define TX_BUFFER_LEN 255
+uint8_t tx_buffer[TX_BUFFER_LEN];
+
+//extern UART_HandleTypeDef huart2;
+
+LLCP_Receiver_t llcp_receiver;
+
+uint16_t num_msg_received = 0;
+
+bool trigger_cmd = false;
+uint8_t trigger_num = 0;
+bool got_new_trigger = false;
+
+uint16_t servo1_pos_cmd = 1000;
+uint16_t servo2_pos_cmd = 1000;
+uint8_t recieved_value = 0;
+bool got_new_servo_pos = false;
+uint16_t msg_len;
+
+static void USART_LL_Write(const uint8_t *buf, uint16_t len) {
+  for (uint32_t i = 0; i < len; i++) {
+    // wait for TXE (data register empty)
+    while (!LL_USART_IsActiveFlag_TXE(USART2)) {}
+    LL_USART_TransmitData8(USART2, buf[i]);
+  }
+  // wait for TC (transmission complete) to flush the last byte
+  while (!LL_USART_IsActiveFlag_TC(USART2)) {}
+}
+
+void send_heartbeat() {
+  heartbeat_msg my_msg;
+  //uint16_t msg_len;
+
+  // fill the message with data
+
+  my_msg.id = HEARTBEAT_MSG_ID;
+  my_msg.is_running = true;
+  my_msg.messages_received = num_msg_received;
+  my_msg.servo1_pos = servo1_pos_cmd;
+  my_msg.servo2_pos = servo2_pos_cmd;
+  my_msg.last_trigger = trigger_cmd;
+  my_msg.last_trigger_num = trigger_num;
+
+  //llcp_prepareMessage will fill your TX buffer while returning the number of bytes written
+  msg_len = llcp_prepareMessage((uint8_t*)&my_msg, sizeof(my_msg), tx_buffer);
+
+  //send the message out over the serial line
+  //HAL_StatusTypeDef st = HAL_UART_Transmit(&huart2, tx_buffer, msg_len, 100);
+  //if (st != HAL_OK) {
+  //}
+}
+
+void send_imu(uint8_t angle_data) {
+	imu_msg my_msg_imu;
+	//uint16_t msg_len;
+
+	my_msg_imu.id = IMU_MSG_ID;
+	//my_msg_imsu.t_ms = 42;//HAL_GetTick();
+	my_msg_imu.angle = 100;//angle_data;
+
+	//llcp_prepareMessage will fill your TX buffer while returning the number of bytes written
+	msg_len = llcp_prepareMessage((uint8_t*)&my_msg_imu, sizeof(my_msg_imu), tx_buffer);
+
+	USART_LL_Write((const uint8_t*)&tx_buffer, msg_len);
+	//USART_LL_Write(tx_buffer, msg_len);
+	//send the message out over the serial line
+	//HAL_StatusTypeDef st = HAL_UART_Transmit(&huart2, tx_buffer, msg_len, 100);
+	//if (st != HAL_OK) {
+	//}
+}
+
+/*
+bool receive_message(void)
+{
+  bool got_valid_msg = false;
+  LLCP_Message_t *llcp_message_ptr = NULL;
+
+  uint8_t ch;
+
+  if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) == SET) {
+    if (HAL_UART_Receive(&huart2, &ch, 1, 0) == HAL_OK) {
+
+      bool checksum_ok = false;
+
+      if (llcp_processChar(ch, &llcp_receiver, &llcp_message_ptr, &checksum_ok)) {
+        if (checksum_ok && llcp_message_ptr) {
+          num_msg_received++;
+
+          switch (llcp_message_ptr->payload[0]) {
+            case SERVO_MSG_ID: {
+              servo_msg *m = (servo_msg *)llcp_message_ptr;
+              servo1_pos_cmd = m->servo1_pos;
+              servo2_pos_cmd = m->servo2_pos;
+              got_new_servo_pos = true;
+              got_valid_msg = true;
+              break;
+            }
+            case TRIGGER_MSG_ID: {
+              trigger_msg *m = (trigger_msg *)llcp_message_ptr;
+              trigger_cmd  = m->trigger;
+              trigger_num  = m->trigger_num;
+              got_new_trigger = true;
+              got_valid_msg = true;
+              break;
+            }
+            case HEARTBEAT_MSG_ID: {
+              got_valid_msg = true;
+              break;
+            }
+            case RECIEVE_MSG: {
+              recieve_msg *m = (recieve_msg *)llcp_message_ptr;
+              recieved_value = m->value;
+              got_valid_msg = true;
+              break;
+            }
+            default: break;
+          }
+          return true;
+        }
+      }
+    }
+  }
+  return got_valid_msg;
+}
+
+ */
+/*
+ *
+bool receive_message() {
+  uint16_t msg_len;
+  bool got_valid_msg = false;
+  LLCP_Message_t* llcp_message_ptr;
+
+  while (Serial.available() > 0) {
+    bool checksum_matched;
+    uint8_t char_in = Serial.read();
+
+    //individual chars are processed one by one by llcp, if a complete message is received, llcp_processChar() returns true
+    if (llcp_processChar(char_in, &llcp_receiver, &llcp_message_ptr, &checksum_matched)) {
+      if (checksum_matched) {
+        num_msg_received++;
+        switch (llcp_message_ptr->payload[0]) {
+          case SERVO_MSG_ID: {
+
+              servo_msg *received_msg = (servo_msg *)llcp_message_ptr;
+
+              servo1_pos_cmd = received_msg->servo1_pos;
+              servo2_pos_cmd = received_msg->servo2_pos;
+
+              got_new_servo_pos = true;
+              got_valid_msg = true;
+              break;
+            }
+          case TRIGGER_MSG_ID: {
+
+              trigger_msg *received_msg = (trigger_msg *)llcp_message_ptr;
+
+              trigger_cmd = received_msg->trigger;
+              trigger_num = received_msg->trigger_num;
+
+              got_new_trigger = true;
+              got_valid_msg = true;
+              break;
+            }
+          case HEARTBEAT_MSG_ID: {
+              got_valid_msg = true;
+              break;
+            }
+          case RECIEVE_MSG: {
+        	  recieve_msg *received_msg=(recieve_msg *)llcp_message_ptr;
+        	  recieved_value = received_msg->value;
+        	  got_valid_msg = true;
+        	  break;
+          }
+        }
+
+        return true;
+      }
+    }
+  }
+  return got_valid_msg;
+}
+ */
+

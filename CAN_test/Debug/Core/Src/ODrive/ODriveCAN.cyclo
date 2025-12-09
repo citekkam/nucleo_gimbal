@@ -1,0 +1,74 @@
+../Core/Inc/ODrive/can_simple_messages.hpp:43:10:void Get_Version_msg_t::decode_buf(const uint8_t*)	1
+../Core/Inc/ODrive/can_simple_messages.hpp:91:10:void Heartbeat_msg_t::decode_buf(const uint8_t*)	1
+../Core/Inc/ODrive/can_simple_messages.hpp:157:10:void Get_Error_msg_t::decode_buf(const uint8_t*)	1
+../Core/Inc/ODrive/can_simple_messages.hpp:223:10:void Set_Axis_State_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:259:10:void Get_Encoder_Estimates_msg_t::decode_buf(const uint8_t*)	1
+../Core/Inc/ODrive/can_simple_messages.hpp:288:10:void Set_Controller_Mode_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:322:10:void Set_Input_Pos_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:359:10:void Set_Input_Vel_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:393:10:void Set_Input_Torque_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:424:10:void Set_Limits_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:458:10:void Set_Traj_Vel_Limit_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:489:10:void Set_Traj_Accel_Limits_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:559:10:void Get_Iq_msg_t::decode_buf(const uint8_t*)	1
+../Core/Inc/ODrive/can_simple_messages.hpp:593:10:void Get_Temperature_msg_t::decode_buf(const uint8_t*)	1
+../Core/Inc/ODrive/can_simple_messages.hpp:622:10:void Reboot_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:658:10:void Get_Bus_Voltage_Current_msg_t::decode_buf(const uint8_t*)	1
+../Core/Inc/ODrive/can_simple_messages.hpp:687:10:void Clear_Errors_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:718:10:void Set_Absolute_Position_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:749:10:void Set_Pos_Gain_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:780:10:void Set_Vel_Gains_msg_t::encode_buf(uint8_t*) const	1
+../Core/Inc/ODrive/can_simple_messages.hpp:819:10:void Get_Torques_msg_t::decode_buf(const uint8_t*)	1
+../Core/Inc/ODrive/can_simple_messages.hpp:853:10:void Get_Powers_msg_t::decode_buf(const uint8_t*)	1
+../Core/Inc/ODrive/ODriveCAN.h:34:10:bool ODriveCanIntfWrapper::sendMsg(uint32_t, uint8_t, const uint8_t*)	1
+../Core/Inc/ODrive/ODriveCAN.h:35:10:void ODriveCanIntfWrapper::pump_events()	1
+../Core/Src/ODrive/ODriveCAN.cpp:16:6:bool ODriveCAN::clearErrors()	1
+../Core/Src/ODrive/ODriveCAN.cpp:21:6:bool ODriveCAN::setPosition(float, float, float)	1
+../Core/Src/ODrive/ODriveCAN.cpp:31:6:bool ODriveCAN::setVelocity(float, float)	1
+../Core/Src/ODrive/ODriveCAN.cpp:40:6:bool ODriveCAN::setControllerMode(uint8_t, uint8_t)	1
+../Core/Src/ODrive/ODriveCAN.cpp:49:6:bool ODriveCAN::setTorque(float)	1
+../Core/Src/ODrive/ODriveCAN.cpp:57:6:bool ODriveCAN::setState(ODriveAxisState)	1
+../Core/Src/ODrive/ODriveCAN.cpp:65:6:bool ODriveCAN::setLimits(float, float)	1
+../Core/Src/ODrive/ODriveCAN.cpp:74:6:bool ODriveCAN::setPosGain(float)	1
+../Core/Src/ODrive/ODriveCAN.cpp:82:6:bool ODriveCAN::setVelGains(float, float)	1
+../Core/Src/ODrive/ODriveCAN.cpp:91:6:bool ODriveCAN::setAbsolutePosition(float)	1
+../Core/Src/ODrive/ODriveCAN.cpp:99:6:bool ODriveCAN::setTrapezoidalVelLimit(float)	1
+../Core/Src/ODrive/ODriveCAN.cpp:107:6:bool ODriveCAN::setTrapezoidalAccelLimits(float, float)	1
+../Core/Src/ODrive/ODriveCAN.cpp:116:6:bool ODriveCAN::getCurrents(Get_Iq_msg_t&, uint16_t)	1
+../Core/Src/ODrive/ODriveCAN.cpp:120:6:bool ODriveCAN::getTemperature(Get_Temperature_msg_t&, uint16_t)	1
+../Core/Src/ODrive/ODriveCAN.cpp:124:6:bool ODriveCAN::getError(Get_Error_msg_t&, uint16_t)	1
+../Core/Src/ODrive/ODriveCAN.cpp:128:6:bool ODriveCAN::getVersion(Get_Version_msg_t&, uint16_t)	1
+../Core/Src/ODrive/ODriveCAN.cpp:132:6:bool ODriveCAN::getFeedback(Get_Encoder_Estimates_msg_t&, uint16_t)	1
+../Core/Src/ODrive/ODriveCAN.cpp:136:6:bool ODriveCAN::getBusVI(Get_Bus_Voltage_Current_msg_t&, uint16_t)	1
+../Core/Src/ODrive/ODriveCAN.cpp:140:6:bool ODriveCAN::getPower(Get_Powers_msg_t&, uint16_t)	1
+../Core/Src/ODrive/ODriveCAN.cpp:144:6:bool ODriveCAN::reset(ResetAction)	1
+../Core/Src/ODrive/ODriveCAN.cpp:151:6:void ODriveCAN::onReceive(uint32_t, uint8_t, const uint8_t*)	19
+../Core/Src/ODrive/ODriveCAN.cpp:241:6:bool ODriveCAN::awaitMsg(uint16_t)	3
+../Core/Inc/ODrive/can_helpers.hpp:38:6:void can_set_signal_raw(uint8_t*, T, size_t, size_t, bool) [with T = unsigned char]	4
+../Core/Inc/ODrive/can_helpers.hpp:16:3:T can_get_signal_raw(const uint8_t*, size_t, size_t, bool) [with T = unsigned char]	4
+../Core/Inc/ODrive/can_helpers.hpp:38:6:void can_set_signal_raw(uint8_t*, T, size_t, size_t, bool) [with T = long unsigned int]	4
+../Core/Inc/ODrive/can_helpers.hpp:16:3:T can_get_signal_raw(const uint8_t*, size_t, size_t, bool) [with T = long unsigned int]	4
+../Core/Inc/ODrive/can_helpers.hpp:38:6:void can_set_signal_raw(uint8_t*, T, size_t, size_t, bool) [with T = float]	4
+../Core/Inc/ODrive/can_helpers.hpp:16:3:T can_get_signal_raw(const uint8_t*, size_t, size_t, bool) [with T = float]	4
+../Core/Inc/ODrive/can_helpers.hpp:76:16:constexpr void can_set_signal_raw(uint8_t*, float, size_t, size_t, bool, float, float) [with T = short int]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Clear_Errors_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Set_Input_Pos_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Set_Input_Vel_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Set_Controller_Mode_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Set_Input_Torque_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Set_Axis_State_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Set_Limits_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Set_Pos_Gain_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Set_Vel_Gains_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Set_Absolute_Position_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Set_Traj_Vel_Limit_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Set_Traj_Accel_Limits_msg_t]	1
+../Core/Inc/ODrive/ODriveCAN.h:283:10:bool ODriveCAN::request(T&, uint16_t) [with T = Get_Iq_msg_t]	2
+../Core/Inc/ODrive/ODriveCAN.h:283:10:bool ODriveCAN::request(T&, uint16_t) [with T = Get_Temperature_msg_t]	2
+../Core/Inc/ODrive/ODriveCAN.h:283:10:bool ODriveCAN::request(T&, uint16_t) [with T = Get_Error_msg_t]	2
+../Core/Inc/ODrive/ODriveCAN.h:283:10:bool ODriveCAN::request(T&, uint16_t) [with T = Get_Version_msg_t]	2
+../Core/Inc/ODrive/ODriveCAN.h:283:10:bool ODriveCAN::request(T&, uint16_t) [with T = Get_Encoder_Estimates_msg_t]	2
+../Core/Inc/ODrive/ODriveCAN.h:283:10:bool ODriveCAN::request(T&, uint16_t) [with T = Get_Bus_Voltage_Current_msg_t]	2
+../Core/Inc/ODrive/ODriveCAN.h:283:10:bool ODriveCAN::request(T&, uint16_t) [with T = Get_Powers_msg_t]	2
+../Core/Inc/ODrive/ODriveCAN.h:301:10:bool ODriveCAN::send(const T&) [with T = Reboot_msg_t]	1
+../Core/Inc/ODrive/can_helpers.hpp:38:6:void can_set_signal_raw(uint8_t*, T, size_t, size_t, bool) [with T = short int]	4

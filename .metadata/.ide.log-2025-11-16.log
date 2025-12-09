@@ -1,0 +1,37 @@
+2025-11-17 00:05:38,269 [INFO] WebApp:194 - Connection lost
+2025-11-17 00:05:48,731 [INFO] WebApp:191 - Connection restablished
+2025-11-17 00:06:42,824 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 587795888 Bytes (1059061760)
+2025-11-17 00:06:47,807 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 790171056 Bytes (1059061760)
+2025-11-17 00:06:47,900 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: CAN
+2025-11-17 00:06:47,900 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: SYS
+2025-11-17 00:06:47,900 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: RCC
+2025-11-17 00:06:47,900 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: NVIC
+2025-11-17 00:06:47,900 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USART
+2025-11-17 00:06:47,901 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: GPIO
+2025-11-17 00:06:47,901 [INFO] CodeGenerator:892 - code generatio: config db path: /opt/st/stm32cubeide_1.19.0/plugins/com.st.stm32cube.common.mx_6.15.0.202507011659//db/
+2025-11-17 00:06:48,008 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/MXTmpFiles/license.tmp_save
+2025-11-17 00:06:48,117 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/MXTmpFiles/license.tmp
+2025-11-17 00:06:48,130 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/MXTmpFiles/gpio.tmp_save
+2025-11-17 00:06:48,219 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/MXTmpFiles/gpio.tmp
+2025-11-17 00:06:48,265 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Src/stm32f4xx_it.c_save
+2025-11-17 00:06:48,411 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Src/stm32f4xx_it.c
+2025-11-17 00:06:48,413 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Inc/stm32f4xx_it.h_save
+2025-11-17 00:06:48,457 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Inc/stm32f4xx_it.h
+2025-11-17 00:06:48,461 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Src/stm32f4xx_hal_msp.c_save
+2025-11-17 00:06:48,536 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Src/stm32f4xx_hal_msp.c
+2025-11-17 00:06:48,537 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/MXTmpFiles/system.tmp_save
+2025-11-17 00:06:48,575 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/MXTmpFiles/system.tmp
+2025-11-17 00:06:48,579 [INFO] CodeEngine:321 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Inc/stm32f4xx_hal_conf.h_save
+2025-11-17 00:06:48,625 [INFO] CodeEngine:345 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Inc/stm32f4xx_hal_conf.h
+2025-11-17 00:06:48,643 [WARN] IPConfigManager:3238 - Warning: the RefConfig PLL2P_FOR_MCO is not available in your config.xml file
+2025-11-17 00:06:48,649 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Inc/main.h_save
+2025-11-17 00:06:48,715 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Inc/main.h
+2025-11-17 00:06:48,717 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Src/main.c_save
+2025-11-17 00:06:48,782 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/CAN_test/Core/Src/main.c
+2025-11-17 00:06:48,948 [INFO] ProjectBuilder:3606 - Time for Copy HAL[1] : 29mS.
+2025-11-17 00:06:48,950 [INFO] ProjectBuilder:5216 - Project Generator version: 4.7.0-B52
+2025-11-17 00:06:49,000 [INFO] ConfigFileManager:1595 - The Die is : DIE421
+2025-11-17 00:06:49,442 [INFO] ProjectBuilder:5496 - Time for Generating toolchain IDE Files: 492mS.
+2025-11-17 00:06:49,443 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 1mS.
+2025-11-17 00:06:49,443 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 0mS.
+2025-11-17 00:07:06,354 [INFO] DmaTabbedPanel:205 - Cannot restore the selected Tab for DMA

@@ -1,0 +1,10 @@
+14:10:14 **** Incremental Build of configuration Debug for project gyro_big_test_cpp ****
+make -j12 all 
+arm-none-eabi-size  gyro_big_test_cpp.elf 
+   text	   data	    bss	    dec	    hex	filename
+  23856	     92	   2308	  26256	   6690	gyro_big_test_cpp.elf
+Finished building: default.size.stdout
+ 
+
+14:10:14 Build Finished. 0 errors, 0 warnings. (took 146ms)
+

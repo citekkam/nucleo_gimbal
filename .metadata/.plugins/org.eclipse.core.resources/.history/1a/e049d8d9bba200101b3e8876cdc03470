@@ -1,0 +1,143 @@
+#include "stm32f0xx.h"
+#include "stm32f0xx_ll_bus.h"
+#include "stm32f0xx_ll_gpio.h"
+#include "stm32f0xx_ll_usart.h"
+#include "stm32f0xx_ll_utils.h"
+#include "stm32f0xx_ll_rcc.h"
+#include <string.h>
+#include <stdbool.h>
+
+/* ==== UART2 pins on NUCLEO-F042K6 ====
+   PA2  -> USART2_TX (to PC)
+   PA15 -> USART2_RX (from PC)
+   Alternate function: AF1
+*/
+
+static void Clock_Init(void);
+static void USART2_GPIO_Init(void);
+static void USART2_Init_InterruptRx(uint32_t baud);
+
+/* ------------ Simple ring buffer ------------ */
+#define RX_BUF_SZ 128
+static volatile uint8_t  rx_buf[RX_BUF_SZ];
+static volatile uint16_t rx_head = 0;   // next write
+static volatile uint16_t rx_tail = 0;   // next read
+
+static inline bool rx_available(void)           { return rx_head != rx_tail; }
+static inline uint16_t rx_count(void)           { return (rx_head - rx_tail) & (RX_BUF_SZ-1); }
+static inline uint8_t  rx_get_byte(void)        { uint8_t b = rx_buf[rx_tail]; rx_tail = (rx_tail+1) & (RX_BUF_SZ-1); return b; }
+static inline void     rx_push_byte(uint8_t b)  { uint16_t n = (rx_head+1) & (RX_BUF_SZ-1); if (n != rx_tail) { rx_buf[rx_head] = b; rx_head = n; } /* else: overflow drop */ }
+
+/* ------------ Example: blocking TX helper ------------ */
+static void USART2_SendByte(uint8_t b) {
+  while (!LL_USART_IsActiveFlag_TXE(USART2)) {}
+  LL_USART_TransmitData8(USART2, b);
+}
+static void USART2_SendString(const char *s) {
+  while (*s) USART2_SendByte((uint8_t)*s++);
+  while (!LL_USART_IsActiveFlag_TC(USART2)) {}
+}
+
+int main(void) {
+  Clock_Init();
+  USART2_GPIO_Init();
+  USART2_Init_InterruptRx(115200);
+
+  USART2_SendString("UART2 RX ready\r\n");
+
+  for (;;) {
+    // Example: echo back lines terminated by '\n'
+    static char line[64];
+    static uint16_t li = 0;
+
+    while (rx_available()) {
+      uint8_t c = rx_get_byte();
+      if (li < sizeof(line)-1) line[li++] = (char)c;
+
+      if (c == '\n') {
+        line[li] = '\0';
+        USART2_SendString("You sent: ");
+        USART2_SendString(line);
+        li = 0;
+      }
+    }
+    // … do other work
+  }
+}
+
+/* =================== Init helpers =================== */
+
+static void Clock_Init(void) {
+	LL_RCC_HSI48_Enable();
+	  while (!LL_RCC_HSI48_IsReady()) {}
+
+	  /* AHB = SYSCLK/1, APB1 = HCLK/1 */
+	  LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
+	  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
+
+	  /* Switch SYSCLK source to HSI48 */
+	  LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI48);
+	  while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI48) {}
+
+	  /* Update timing helpers */
+	  LL_Init1msTick(48000000);
+	  LL_SetSystemCoreClock(48000000);
+	  /* Optionally: SystemCoreClockUpdate(); // if you rely on it elsewhere */
+}
+
+static void USART2_GPIO_Init(void) {
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+
+  LL_GPIO_InitTypeDef io = {0};
+  io.Pin        = LL_GPIO_PIN_2 | LL_GPIO_PIN_15;
+  io.Mode       = LL_GPIO_MODE_ALTERNATE;
+  io.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  io.Speed      = LL_GPIO_SPEED_FREQ_HIGH;
+  io.Pull       = LL_GPIO_PULL_UP;
+  io.Alternate  = LL_GPIO_AF_1;     // USART2 on PA2/PA15
+  LL_GPIO_Init(GPIOA, &io);
+}
+
+static void USART2_Init_InterruptRx(uint32_t baud) {
+  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
+
+  LL_USART_Disable(USART2);
+  LL_USART_SetTransferDirection(USART2, LL_USART_DIRECTION_TX_RX);
+  LL_USART_ConfigCharacter(USART2, LL_USART_DATAWIDTH_8B, LL_USART_PARITY_NONE, LL_USART_STOPBITS_1);
+  LL_USART_SetHWFlowCtrl(USART2, LL_USART_HWCONTROL_NONE);
+  LL_USART_SetOverSampling(USART2, LL_USART_OVERSAMPLING_16);
+  LL_USART_SetBaudRate(USART2, SystemCoreClock, LL_USART_OVERSAMPLING_16, baud);
+
+  /* Enable RX interrupts */
+  LL_USART_EnableIT_RXNE(USART2);     // byte received
+  LL_USART_EnableIT_ERROR(USART2);    // FE/NE/ORE/PE errors
+  // Optional: end-of-frame detection when sender pauses
+  // LL_USART_EnableIT_IDLE(USART2);
+
+  LL_USART_Enable(USART2);
+
+  /* NVIC */
+  NVIC_SetPriority(USART2_IRQn, 1);
+  NVIC_EnableIRQ(USART2_IRQn);
+}
+
+/* =================== IRQ handler =================== */
+void USART2_IRQHandler(void) {
+  // Error handling (clear and drop the byte)
+  if (LL_USART_IsActiveFlag_ORE(USART2)) { LL_USART_ClearFlag_ORE(USART2); (void)USART2->RDR; }
+  if (LL_USART_IsActiveFlag_FE(USART2))  { LL_USART_ClearFlag_FE(USART2);  (void)USART2->RDR; }
+  if (LL_USART_IsActiveFlag_NE(USART2))  { LL_USART_ClearFlag_NE(USART2);  (void)USART2->RDR; }
+  if (LL_USART_IsActiveFlag_PE(USART2))  { LL_USART_ClearFlag_PE(USART2);  (void)USART2->RDR; }
+
+  // Optional: frame boundary via IDLE line (no data for 1 frame time)
+  // if (LL_USART_IsActiveFlag_IDLE(USART2)) {
+  //   LL_USART_ClearFlag_IDLE(USART2);
+  //   // You could mark "frame complete" here and process rx_count()
+  // }
+
+  // Byte received?
+  if (LL_USART_IsActiveFlag_RXNE(USART2)) {
+    uint8_t b = LL_USART_ReceiveData8(USART2);  // reading RDR clears RXNE
+    rx_push_byte(b);
+  }
+}
