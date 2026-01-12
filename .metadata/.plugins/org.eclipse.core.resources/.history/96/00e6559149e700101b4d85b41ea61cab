@@ -1,0 +1,139 @@
+#include "llcp_lib.h"
+#include "main.h"
+#include <string.h>
+#include "ICM20602.h"
+#include "llcp.h"
+#include <stdbool.h>
+
+// Pokud nemáte LL hlavičky v main.h, je potřeba je přidat (např. #include "stm32g4xx_ll_usart.h")
+
+#define TX_BUFFER_LEN 255
+uint8_t tx_buffer[TX_BUFFER_LEN];
+
+// V LL nepoužíváme extern UART_HandleTypeDef huart2.
+// Místo toho přistupujeme přímo k instanci periferie, obvykle definované jako USART2.
+
+LLCP_Receiver_t llcp_receiver;
+
+uint16_t num_msg_received = 0;
+
+bool trigger_cmd = false;
+uint8_t trigger_num = 0;
+bool got_new_trigger = false;
+
+uint16_t servo1_pos_cmd = 1000;
+uint16_t servo2_pos_cmd = 1000;
+uint8_t recieved_value = 0;
+bool got_new_servo_pos = false;
+
+// Pomocná funkce pro odeslání dat přes LL USART (blokující)
+void LL_UART_SendBuffer(USART_TypeDef *USARTx, uint8_t *buffer, uint16_t len) {
+    for (uint16_t i = 0; i < len; i++) {
+        // Čekání, dokud není vysílací registr prázdný (TXE flag)
+        while (!LL_USART_IsActiveFlag_TXE(USARTx)) {
+            // Zde by mohl být timeout, v jednoduché LL implementaci se často vynechává
+        }
+        // Zapsání 8bit dat
+        LL_USART_TransmitData8(USARTx, buffer[i]);
+    }
+    // Volitelné: Čekání na dokončení přenosu (TC flag), pokud je to nutné před vypnutím UARTu
+    while (!LL_USART_IsActiveFlag_TC(USARTx)) {}
+}
+
+void send_heartbeat() {
+  heartbeat_msg my_msg;
+  uint16_t msg_len;
+
+  // fill the message with data
+  my_msg.id = HEARTBEAT_MSG_ID;
+  my_msg.is_running = true;
+  my_msg.messages_received = num_msg_received;
+  my_msg.servo1_pos = servo1_pos_cmd;
+  my_msg.servo2_pos = servo2_pos_cmd;
+  my_msg.last_trigger = trigger_cmd;
+  my_msg.last_trigger_num = trigger_num;
+
+  // llcp_prepareMessage will fill your TX buffer
+  msg_len = llcp_prepareMessage((uint8_t*)&my_msg, sizeof(my_msg), tx_buffer);
+
+  // Odeslání přes LL (předpokládám USART2 místo huart2)
+  LL_UART_SendBuffer(USART2, tx_buffer, msg_len);
+}
+
+void send_imu(uint8_t angle_data) {
+	imu_msg my_msg_imu;
+	uint16_t msg_len;
+
+	my_msg_imu.id = IMU_MSG_ID;
+	//my_msg_imsu.t_ms = 42;
+	my_msg_imu.angle = 100;//angle_data;
+
+	// llcp_prepareMessage will fill your TX buffer
+	msg_len = llcp_prepareMessage((uint8_t*)&my_msg_imu, sizeof(my_msg_imu), tx_buffer);
+
+	// Odeslání přes LL
+	LL_UART_SendBuffer(USART2, tx_buffer, msg_len);
+}
+
+
+bool receive_message(void)
+{
+  bool got_valid_msg = false;
+  LLCP_Message_t *llcp_message_ptr = NULL;
+
+  // Použijeme while smyčku pro vyčtení všeho, co je aktuálně v bufferu UARTu.
+  // Je to robustnější než IF, protože LL je rychlé a buffer může obsahovat více znaků.
+  while (LL_USART_IsActiveFlag_RXNE(USART2)) {
+
+    // Přečtení bajtu přímo z registru
+    uint8_t ch = LL_USART_ReceiveData8(USART2);
+    bool checksum_ok = false;
+
+    // Zpracování znaku knihovnou LLCP
+    if (llcp_processChar(ch, &llcp_receiver, &llcp_message_ptr, &checksum_ok)) {
+        if (checksum_ok && llcp_message_ptr) {
+          num_msg_received++;
+
+          switch (llcp_message_ptr->payload[0]) {
+            case SERVO_MSG_ID: {
+              servo_msg *m = (servo_msg *)llcp_message_ptr;
+              servo1_pos_cmd = m->servo1_pos;
+              servo2_pos_cmd = m->servo2_pos;
+              got_new_servo_pos = true;
+              got_valid_msg = true;
+              break;
+            }
+            case TRIGGER_MSG_ID: {
+              trigger_msg *m = (trigger_msg *)llcp_message_ptr;
+              trigger_cmd  = m->trigger;
+              trigger_num  = m->trigger_num;
+              got_new_trigger = true;
+              got_valid_msg = true;
+              break;
+            }
+            case HEARTBEAT_MSG_ID: {
+              got_valid_msg = true;
+              break;
+            }
+            case IMU_MSG_ID: {
+			  got_valid_msg = true;
+			  break;
+			}
+            case RECIEVE_MSG: {
+              recieve_msg *m = (recieve_msg *)llcp_message_ptr;
+              recieved_value = m->value;
+              got_valid_msg = true;
+              break;
+            }
+            default: break;
+          }
+          // Pokud jsme zpracovali celou zprávu, můžeme vrátit true okamžitě,
+          // nebo nechat smyčku doběhnout, pokud chceme zpracovat i další bajty v bufferu.
+          // Zde vracíme true, aby hlavní smyčka mohla reagovat hned.
+          return true;
+        }
+      }
+  }
+
+  return got_valid_msg;
+}

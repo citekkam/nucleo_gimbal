@@ -1,0 +1,5 @@
+../Core/Src/llcp_lib.c:7:9:llcp_hex2bin	8
+../Core/Src/llcp_lib.c:39:6:llcp_bin2hex	2
+../Core/Src/llcp_lib.c:56:6:llcp_initialize	1
+../Core/Src/llcp_lib.c:67:6:llcp_processChar	9
+../Core/Src/llcp_lib.c:265:10:llcp_prepareMessage	2

@@ -98,12 +98,11 @@ HAL_StatusTypeDef ICM20602_Init(uint8_t ad0,
 	ret = HAL_I2C_Mem_Write(&hi2c1, (ICM20602_ADDRESS<<1) + 0, REG_DLPF_ACC, 1, &temp_data, 1, 100);
 	Print2Console(DLPF_SET_ACC, DLPF_ERR_ACC, ret);
 
-	/*Set up Sample rate for now it is 500Hz*/
 	temp_data = FS500;
 	ret = HAL_I2C_Mem_Write(&hi2c1, (ICM20602_ADDRESS<<1) + 0, REG_SAMPLE_DIV, 1, &temp_data, 1, 100);
 	Print2Console(SR_SET, SR_ERR, ret);
-	/*Gyroscope configuration*/
-	temp_data = FS_GYRO_1000;
+
+	temp_data = FS_GYRO_2000;
 	ret = HAL_I2C_Mem_Write(&hi2c1, (ICM20602_ADDRESS<<1) + 0, REG_CONFIG_GYRO, 1, &temp_data, 1, 100);
 	Print2Console(GYRO_CONFIG, GYRO_ERR, ret);
 
@@ -159,10 +158,10 @@ void Read_Data_ACC()
 	acc_x_raw = (int16_t)((data[0] << 8) + data[1]);
 	acc_y_raw = (int16_t)((data[2] << 8) + data[3]);
 	acc_z_raw = (int16_t)((data[4] << 8) + data[5]);
-	acc_x = ((float)acc_x_raw /4096.0);
-	acc_y = ((float)acc_y_raw /4096.0);
-	acc_z = ((float)acc_z_raw /4096.0);
-	rad_XZ  = (atan2f(acc_x, acc_z));
+	acc_x = ((float)acc_x_raw /2048.0);
+	acc_y = ((float)acc_y_raw /2048.0);
+	acc_z = ((float)acc_z_raw /2048.0);
+	rad_XZ  = atan2f(acc_x, acc_z);
 	//rad_XZ = atan2f(-acc_x, sqrt(acc_y*acc_y + acc_z*acc_z));
 	deg_XZ = (rad_XZ*RAD2DEG);
 

@@ -1,0 +1,4 @@
+../Core/Src/llcp.c:27:6:LL_UART_SendBuffer	4
+../Core/Src/llcp.c:40:6:send_heartbeat	1
+../Core/Src/llcp.c:58:6:send_imu	1
+../Core/Src/llcp.c:75:6:receive_message	9

@@ -77,6 +77,9 @@ CompFilter filter;
 int exponent = 1;
 float target_pos = 0;
 static uint32_t MY_TIME = 1;
+float first_pos = 0;
+
+uint32_t feedback_counter = 0;        // Počítadlo zpráv
 
 //--------------------------ODrive----------------------------------
 CubeCANInterface can_intf = {&hcan1};
@@ -325,18 +328,13 @@ int main(void)
 
   }
 
+
   //sprintf(msg5, "ODrive running \r\n");
   //HAL_UART_Transmit(&huart2, (uint8_t*)msg5, strlen(msg5), 100);
 
   printf("ODrive Running \r\n");
 
-  //float current_encoder_pos = odrv0.getEndpoint<float>(31, 100);
-  //odrv0.setEndpoint<float>(39, current_encoder_pos);
-  //printf("Offset set to: %.4f turns \r\n", current_encoder_pos);
-  //sprintf(msg5, "angle: %d pos:%d \r\n", (int)(filter.angle), (int)target_pos);
-  //HAL_UART_Transmit(&huart2, (uint8_t*)msg5, strlen(msg5), 100);
-
-  //odrv0.axis0.controller.input_pos_offset = odrv0.axis0.encoder.pos_estimate;
+  odrv0.setPosition(0.0, 0.0, 0);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -349,14 +347,19 @@ int main(void)
   //LL_TIM_EnableCounter(TIM6);
   while (1)
   {
-	  uint32_t loop_time;
-	  while(MY_TIME < 100){};
-	  loop_time = MY_TIME;
-	  MY_TIME = 0;
-	  Read_Gyro();
-	  Read_Data_ACC();
+	  pumpEvents(can_intf);
 
-	  CF_Update(&filter, gyro_y, deg_XZ);
+	  uint32_t loop_time;
+	  if (MY_TIME >= 100)
+	  {
+		  loop_time = MY_TIME;
+		  MY_TIME = 0;
+		  Read_Gyro();
+		  Read_Data_ACC();
+
+		  CF_Update(&filter, gyro_y, deg_XZ);
+
+
 	  /*
 	   * --------------------------------------------- kontrola frekvence---------------------
 	  uint32_t current_time = HAL_GetTick();
@@ -390,22 +393,35 @@ int main(void)
 
 	//------------------------------------ODrive-----------------------
 
-	 pumpEvents(can_intf);
 
 	  //float min_pos = 0.01;
 	  //target_pos += min_pos;
 /*-----------TEST-MOVEMENT-------------
  *
+		  if (odrv0_user_data.received_feedback )
+		  {
+			  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
+			  //Get_Iq_msg_t feedback2 = odrv0_user_data.last_feedback;
+			  odrv0_user_data.received_feedback = false;
+
+
+
+			  //feedback_counter++;
+
+		  }
  */
 
-	  float error_position = 0.0 - filter.angle;
+ 	 	  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
 
-	  target_pos = -error_position/360.0;
-	  float target_vel = -gyro_y/360.0;
 
-	  printf("ang: %.2f, pos: %.5f time %d\r\n",filter.angle, target_pos, loop_time);
-	  //sprintf(msg5, "angle: %d pos:%.4f \r\n", (int)(filter.angle), (float)target_pos);
-	  //HAL_UART_Transmit(&huart2, (uint8_t*)msg5, strlen(msg5), 100);
+		  float error_position = feedback.Pos_Estimate + (filter.angle/360.0);
+
+		  //target_pos = error_position/360.0;
+		  float target_vel = -gyro_y/360.0;
+
+		  printf("Pos_Estim: %.4f target: %.4f ang: %.2f\r\n",feedback.Pos_Estimate, target_pos, filter.angle);
+	  //printf("ang: %.4f, pos: %.4f time %.2f\r\n",target_pos, target_vel, filter.angle);
+
 
 	  /*
 	   *
@@ -419,19 +435,43 @@ int main(void)
 
 	  // Send the position command
 
-	  //odrv0.setVelocity(5);
-	  odrv0.setPosition(target_pos, target_vel, 0);
+	  	  odrv0.setPosition(error_position, target_vel, 0);
+	  //odrv0.setPosition(0.0, 0.0, 0);
 
+	  //printf("time: %d\r\n",loop_time);
 	  // Print feedback if we have new data
 
-	  if (odrv0_user_data.received_feedback )
-	  {
-		  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
-		  odrv0_user_data.received_feedback = false;
 
-	  }
+		  /*
+		  if (odrv0_user_data.received_feedback )
+		  {
+			  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
+			  //Get_Iq_msg_t feedback2 = odrv0_user_data.last_feedback;
+			  odrv0_user_data.received_feedback = false;
+			  printf("Pos_Estim: %.4f target: %.4f ang: %.2f\r\n",feedback.Pos_Estimate, target_pos, filter.angle);
+
+
+
+			  //feedback_counter++;
+
+		  }
+
+	  	  if ((HAL_GetTick() - last_print_time) >= 1000)
+	        {
+	            // Uložíme aktuální čas pro příští měření
+		  	  	last_print_time = HAL_GetTick();
+
+	            // Vypíšeme, kolik zpráv jsme napočítali za uplynulou sekundu
+	            printf("ODrive Rate: %lu Hz | Angle: %.2f\r\n", feedback_counter, filter.angle);
+
+	            // Vynulujeme počítadlo pro další sekundu
+	            feedback_counter = 0;
+	        }
+		   */
+	  //printf("Pos_Estim: %d \r\n",loop_time);
 
 	  //HAL_Delay(500);
+	  }
 
 
 
@@ -539,7 +579,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.ClockSpeed = 400000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -575,7 +615,7 @@ static void MX_TIM6_Init(void)
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
 
   /* TIM6 interrupt Init */
-  NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1, 0));
+  NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
   NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
   /* USER CODE BEGIN TIM6_Init 1 */
@@ -781,7 +821,6 @@ void clock_callback()
 {
 	MY_TIME += 1;
 
-	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
 }
 
 void imu_callback()

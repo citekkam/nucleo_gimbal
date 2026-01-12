@@ -1,8 +1,8 @@
-../Core/Src/ICM20602.c:39:6:Print2Console	2
-../Core/Src/ICM20602.c:52:6:Calibrate_GYRO	3
-../Core/Src/ICM20602.c:74:19:ICM20602_Init	1
-../Core/Src/ICM20602.c:155:6:Read_Gyro	3
-../Core/Src/ICM20602.c:180:6:Read_Data_ACC	2
-../Core/Src/ICM20602.c:205:6:Combine_sensor	1
-../Core/Src/ICM20602.c:258:6:CF_Init	1
-../Core/Src/ICM20602.c:262:6:CF_Update	1
+../Core/Src/ICM20602.c:38:6:Print2Console	1
+../Core/Src/ICM20602.c:51:6:Calibrate_GYRO	3
+../Core/Src/ICM20602.c:76:19:ICM20602_Init	1
+../Core/Src/ICM20602.c:157:6:Read_Gyro	3
+../Core/Src/ICM20602.c:182:6:Read_Data_ACC	2
+../Core/Src/ICM20602.c:207:6:Combine_sensor	1
+../Core/Src/ICM20602.c:260:6:CF_Init	1
+../Core/Src/ICM20602.c:264:6:CF_Update	1

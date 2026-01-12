@@ -1,5 +1,7 @@
 "./Core/Src/ICM20602.o"
 "./Core/Src/ODrive_CubeIDE_glue.o"
+"./Core/Src/llcp.o"
+"./Core/Src/llcp_lib.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32f4xx_hal_msp.o"
 "./Core/Src/stm32f4xx_it.o"

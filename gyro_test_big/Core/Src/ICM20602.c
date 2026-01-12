@@ -7,7 +7,6 @@
 #include <stdio.h>
 
 extern I2C_HandleTypeDef hi2c1;
-extern UART_HandleTypeDef huart2;
 
 #define RAD2DEG 57.295
 #define alpha 0.95
@@ -40,11 +39,11 @@ void Print2Console(const char* msg1, const char* msg2, int ret)
 {
 	if (ret == HAL_OK)
 	{
-		HAL_UART_Transmit(&huart2, (const uint8_t*)msg1, strlen(msg1),100);
+		//HAL_UART_Transmit(&huart2, (const uint8_t*)msg1, strlen(msg1),100);
 	}
 	else
 	{
-		HAL_UART_Transmit(&huart2, (const uint8_t*)msg2, strlen(msg2),100);
+		//HAL_UART_Transmit(&huart2, (const uint8_t*)msg2, strlen(msg2),100);
 	}
 	//HAL_Delay(1000);
 }
@@ -67,8 +66,11 @@ void Calibrate_GYRO()
 	offset_x = (int16_t)(gyro_x_cal / 1000);
 	offset_y = (int16_t)(gyro_y_cal / 1000);
 	offset_z = (int16_t)(gyro_z_cal / 1000);
+	/*
+	 *
 	sprintf(msg, "%d from 1000, Y offset %d\r\n",ret_count, offset_y);
 	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
+	 */
 }
 
 HAL_StatusTypeDef ICM20602_Init(uint8_t ad0,

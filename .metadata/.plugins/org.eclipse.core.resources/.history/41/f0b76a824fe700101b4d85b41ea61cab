@@ -1,0 +1,56 @@
+#include <stdbool.h>
+#include <stdint.h>
+
+#ifndef INC_LLCP_H_
+#define INC_LLCP_H_
+
+#define SERVO_MSG_ID 54
+#define TRIGGER_MSG_ID 53
+#define HEARTBEAT_MSG_ID 52
+#define IMU_MSG_ID  51
+#define RECIEVE_MSG 42
+
+typedef struct __attribute__((__packed__))
+{
+  uint8_t  id;
+  uint16_t servo1_pos;
+  uint16_t servo2_pos;
+}servo_msg;
+
+typedef struct __attribute__((__packed__))
+{
+  uint8_t  id;
+  uint8_t  trigger_num;
+  bool  trigger;
+}trigger_msg;
+
+typedef struct __attribute__((__packed__))
+{
+  uint8_t  id;
+  bool     is_running;
+  uint16_t messages_received;
+  uint16_t servo1_pos;
+  uint16_t servo2_pos;
+  bool     last_trigger;
+  uint8_t  last_trigger_num;
+}heartbeat_msg;
+
+typedef struct __attribute__((__packed__))
+{
+	uint8_t  id;
+	//uint32_t t_ms;
+	uint8_t    angle;
+}imu_msg;
+
+typedef struct __attribute__((__packed__))
+{
+	uint8_t  id;
+	//uint32_t t_ms;
+	uint8_t    value;
+}recieve_msg;
+
+void send_heartbeat();
+void send_imu(uint8_t angle_data);
+bool receive_message(void);
+
+#endif /* INC_LLCP_H_ */
