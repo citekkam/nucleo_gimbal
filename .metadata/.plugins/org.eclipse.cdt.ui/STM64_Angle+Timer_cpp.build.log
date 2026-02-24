@@ -1,21 +1,10 @@
-14:19:20 **** Incremental Build of configuration Debug for project STM64_Angle+Timer_cpp ****
+21:54:25 **** Incremental Build of configuration Debug for project STM64_Angle+Timer_cpp ****
 make -j12 all 
-arm-none-eabi-g++ "../Core/Src/main.cpp" -mcpu=cortex-m4 -std=gnu++14 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -DUSE_FULL_LL_DRIVER -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-../Core/Src/main.cpp: In function 'int main()':
-../Core/Src/main.cpp:352:20: warning: variable 'loop_time' set but not used [-Wunused-but-set-variable]
-  352 |           uint32_t loop_time;
-      |                    ^~~~~~~~~
-arm-none-eabi-g++ -o "STM64_Angle+Timer_cpp.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/kamil/STM32CubeIDE/workspace_1.19.0/gyro_big_test_cpp/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM64_Angle+Timer_cpp.map" -Wl,--gc-sections -static -u_printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
-Finished building target: STM64_Angle+Timer_cpp.elf
- 
 arm-none-eabi-size  STM64_Angle+Timer_cpp.elf 
-arm-none-eabi-objdump -h -S STM64_Angle+Timer_cpp.elf  > "STM64_Angle+Timer_cpp.list"
    text	   data	    bss	    dec	    hex	filename
-  45164	    476	   2436	  48076	   bbcc	STM64_Angle+Timer_cpp.elf
+  44484	    476	   2372	  47332	   b8e4	STM64_Angle+Timer_cpp.elf
 Finished building: default.size.stdout
  
-Finished building: STM64_Angle+Timer_cpp.list
- 
 
-14:19:20 Build Finished. 0 errors, 1 warnings. (took 486ms)
+21:54:25 Build Finished. 0 errors, 0 warnings. (took 133ms)
 
