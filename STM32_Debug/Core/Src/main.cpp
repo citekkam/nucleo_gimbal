@@ -64,8 +64,6 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-float gx, gy, gz;
-int iic_err = 0;
 extern float gyro_y;
 extern float deg_XZ;
 char msg5[64];
@@ -104,6 +102,7 @@ static void MX_USART2_UART_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_TIM10_Init(void);
+static void MX_TIM6_Init(void);
 /* USER CODE BEGIN PFP */
 
 void onHeartbeat(Heartbeat_msg_t& msg, void* user_data) {
@@ -177,8 +176,9 @@ int main(void)
   MX_CAN1_Init();
   MX_I2C1_Init();
   MX_TIM10_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
-  ICM20602_Init(/*ad0=*/0, /*dlpf_cfg=*/2, /*smpl_div=*/4, /*fs=*/GFS_1000);
+  ICM20602_Init();
   CF_Init(&filter, 0.0);
 
 
@@ -334,143 +334,44 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
     LL_TIM_SetCounter(TIM10, 0);
-    LL_TIM_EnableIT_UPDATE(TIM10);
+    //LL_TIM_EnableIT_UPDATE(TIM10);
     LL_TIM_EnableCounter(TIM10);
+
+    LL_TIM_SetCounter(TIM6, 0);
+	LL_TIM_EnableIT_UPDATE(TIM6);
+	LL_TIM_EnableCounter(TIM6);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  uint32_t loop_time;
-	  	  if (MY_TIME >= 50)
-	  	  {
-	  		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);
-
-	  		  loop_time = MY_TIME;
-	  		  MY_TIME = 0;
-	  		  //printf("%d \n\r", count_limit);
-	  		  count_limit++;
-
-  			  //HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-	  		  Read_Gyro();
-	  		  //LL_ReadY_Gyro();
-
-	  		  Read_Data_ACC();
-  		  	  //HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-
-	  		  /*
-	  		  acc_cnt++;
-	  		  if (acc_cnt >= 10)
-	  		  {
-	  			  acc_cnt = 0;
-	  			  //LL_Read_Acc();
-	  		  }
-	  		   */
 	  		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);
-	  		  CF_Update(&filter, gyro_y, deg_XZ);
-	  		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
 
-	  /*
-
-	  		  if (filter.angle >= 90) {
-	  			  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-	  		  } else {
-
-	  		  	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-	  		  }
-	  */
-
-
-
-
-	  	  /*
-	  	   * --------------------------------------------- kontrola frekvence---------------------
-	  	  uint32_t current_time = HAL_GetTick();
-
-	  	      // Kontrola, zda uplynula 1 sekunda (1000 ms) od posledního tisku
-	  	      if ((current_time - last_print_time) >= 1000)
-	  	      {
-	  	          // Atomicky přečíst čítač přerušení, aby nedošlo k jeho změně během čtení z ISR
-	  	          // i když u 32bit proměnné to není vždy nutné, je to dobrá praxe.
-	  	          // Není nutné lockovat, stačí přečíst.
-	  	          uint32_t frequency = cf_update_count;
-
-	  	          char freq_msg[64];
-	  	          // Vytvoření zprávy pro UART
-	  	          int len = sprintf(freq_msg, "Timer Freq: %lu Hz\r\n", (unsigned long)frequency);
-
-	  	          // Odeslání přes UART/USART (huart2). Časový limit (timeout) 100 ms.
-	  	          HAL_UART_Transmit(&huart2, (uint8_t *)freq_msg, len, 100);
-
-	  	          // Resetování času a čítače pro novou sekundu
-	  	          last_print_time = current_time;
-	  	          cf_update_count = 0; // Reset čítače pro měření další sekundy
-	  	      }
-
-	  	   */
-	  	  //sprintf(msg5, "angle: %d ACC:%d \r\n", (int)(filter.angle), (int)deg_XZ);
-	  	  //HAL_UART_Transmit(&huart2, (uint8_t*)msg5, strlen(msg5), 100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 
 	  	//------------------------------------ODrive-----------------------
 
-
-	  	  //float min_pos = 0.01;
-	  	  //target_pos += min_pos;
-	  /*-----------TEST-MOVEMENT-------------
-	   *
-	  		  if (odrv0_user_data.received_feedback )
-	  		  {
-	  			  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
-	  			  //Get_Iq_msg_t feedback2 = odrv0_user_data.last_feedback;
-	  			  odrv0_user_data.received_feedback = false;
-
-
-
-	  			  //feedback_counter++;
-
-	  		  }
-	   */
+	  /*
 	  			// hlavni smycka, odkomentovat
 	   	 	  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
 
 
 	  		  error_position = feedback.Pos_Estimate + ((-reference_angle/360)+(filter.angle/360.0));
 
-	  		  //target_pos = error_position/360.0;
 
 
 	  		  float target_vel = -gyro_y/360;
-	  /*
-	  */
 
 
 
 
-	  	  /*
-	  	   	  // ledka se rozsviti pokud je uhel vetsi jak 90
-	  		  if (led_diode) {
-	  			  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);
-	  			  target_pos = feedback.Pos_Estimate + (40/360.0);
-	  			  led_diode = 0;
-	  		  } else {
-	  			  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
-	  			  target_pos = feedback.Pos_Estimate - (40/360.0);
-	  			  led_diode = 1;
-	  		  }
-
-	  	   */
 	  		  printf("gyro: %.4f acc: %.4f angle: %.4f \r\n", filter.gyro_integral_raw ,deg_XZ, filter.angle);
 
-
-	  	  // Send the position command
-
-  			  //HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
 	  	  	  odrv0.setPosition(error_position, 0, 0);
-  			  //HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+	  */
 
 
 
@@ -516,11 +417,8 @@ int main(void)
 	  	        }
 	  		   */
 
-	  	  	  //printf("Time: %ld\r\n", MY_TIME);
-	  		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
+	  		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
 
-	  	  //HAL_Delay(500);
-	  	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -647,6 +545,43 @@ static void MX_I2C1_Init(void)
 }
 
 /**
+  * @brief TIM6 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM6_Init(void)
+{
+
+  /* USER CODE BEGIN TIM6_Init 0 */
+
+  /* USER CODE END TIM6_Init 0 */
+
+  LL_TIM_InitTypeDef TIM_InitStruct = {0};
+
+  /* Peripheral clock enable */
+  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
+
+  /* TIM6 interrupt Init */
+  NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_EnableIRQ(TIM6_DAC_IRQn);
+
+  /* USER CODE BEGIN TIM6_Init 1 */
+
+  /* USER CODE END TIM6_Init 1 */
+  TIM_InitStruct.Prescaler = 839;
+  TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
+  TIM_InitStruct.Autoreload = 499;
+  LL_TIM_Init(TIM6, &TIM_InitStruct);
+  LL_TIM_EnableARRPreload(TIM6);
+  LL_TIM_SetTriggerOutput(TIM6, LL_TIM_TRGO_RESET);
+  LL_TIM_DisableMasterSlaveMode(TIM6);
+  /* USER CODE BEGIN TIM6_Init 2 */
+
+  /* USER CODE END TIM6_Init 2 */
+
+}
+
+/**
   * @brief TIM10 Initialization Function
   * @param None
   * @retval None
@@ -663,19 +598,15 @@ static void MX_TIM10_Init(void)
   /* Peripheral clock enable */
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM10);
 
-  /* TIM10 interrupt Init */
-  NVIC_SetPriority(TIM1_UP_TIM10_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
-  NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
-
   /* USER CODE BEGIN TIM10_Init 1 */
 
   /* USER CODE END TIM10_Init 1 */
-  TIM_InitStruct.Prescaler = 839;
+  TIM_InitStruct.Prescaler = 8399;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 9;
+  TIM_InitStruct.Autoreload = 65535;
   TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
   LL_TIM_Init(TIM10, &TIM_InitStruct);
-  LL_TIM_DisableARRPreload(TIM10);
+  LL_TIM_EnableARRPreload(TIM10);
   /* USER CODE BEGIN TIM10_Init 2 */
 
   /* USER CODE END TIM10_Init 2 */
@@ -787,11 +718,7 @@ int _write(int file, char *ptr, int len) {
 
 void clock_callback()
 {
-	  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);
-
 	MY_TIME += 1;
-	  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
-
 }
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
@@ -801,7 +728,17 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 
 void imu_callback()
 {
-	  cf_update_count++;
+	static uint16_t previous_tick = 0;
+
+	Read_Gyro();
+	Read_Data_ACC();
+	uint16_t current_tick = LL_TIM_GetCounter(TIM10);
+
+	uint16_t dt_tick = current_tick - previous_tick;
+	float dt_float = (float)dt_tick*0.0001;
+	previous_tick = current_tick;
+	printf("%.6f \r\n", dt_float);
+	CF_Update(&filter, gyro_y, deg_XZ, dt_float);
 }
 
 #ifdef __cplusplus

@@ -1,0 +1,223 @@
+/*
+void I2C_Write(uint8_t devAddr, uint8_t *data, uint8_t size)
+{
+    while (LL_I2C_IsActiveFlag_BUSY(I2C1));
+
+    // START
+    LL_I2C_GenerateStartCondition(I2C1);
+    while (!LL_I2C_IsActiveFlag_SB(I2C1));
+
+    // Send address + WRITE
+    LL_I2C_TransmitData8(I2C1, devAddr << 1);
+    while (!LL_I2C_IsActiveFlag_ADDR(I2C1));
+    LL_I2C_ClearFlag_ADDR(I2C1);
+
+    // Send data bytes
+    for (uint8_t i = 0; i < size; i++)
+    {
+        while (!LL_I2C_IsActiveFlag_TXE(I2C1));
+        LL_I2C_TransmitData8(I2C1, data[i]);
+    }
+
+    // Wait for transfer finished
+    while (!LL_I2C_IsActiveFlag_BTF(I2C1));
+
+    // STOP
+    LL_I2C_GenerateStopCondition(I2C1);
+}
+
+
+void I2C_Read(uint8_t devAddr, uint8_t reg, uint8_t *buffer, uint8_t size)
+{
+    while (LL_I2C_IsActiveFlag_BUSY(I2C1));
+
+    // ---------- WRITE register address ----------
+    LL_I2C_GenerateStartCondition(I2C1);
+    while (!LL_I2C_IsActiveFlag_SB(I2C1));
+
+    LL_I2C_TransmitData8(I2C1, devAddr << 1);   // WRITE
+    while (!LL_I2C_IsActiveFlag_ADDR(I2C1));
+    LL_I2C_ClearFlag_ADDR(I2C1);
+
+    while (!LL_I2C_IsActiveFlag_TXE(I2C1));
+    LL_I2C_TransmitData8(I2C1, reg);
+
+    while (!LL_I2C_IsActiveFlag_BTF(I2C1));
+
+    // ---------- RESTART + READ ----------
+    LL_I2C_GenerateStartCondition(I2C1);
+    while (!LL_I2C_IsActiveFlag_SB(I2C1));
+
+    LL_I2C_TransmitData8(I2C1, (devAddr << 1) | 1); // READ
+    while (!LL_I2C_IsActiveFlag_ADDR(I2C1));
+
+    if (size == 1)
+    {
+        // single byte read
+        LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_NACK);
+        LL_I2C_ClearFlag_ADDR(I2C1);
+
+        LL_I2C_GenerateStopCondition(I2C1);
+
+        while (!LL_I2C_IsActiveFlag_RXNE(I2C1));
+        buffer[0] = LL_I2C_ReceiveData8(I2C1);
+    }
+    else
+    {
+        // multi-byte read
+        LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
+        LL_I2C_ClearFlag_ADDR(I2C1);
+
+        for (uint8_t i = 0; i < size; i++)
+        {
+            if (i == size - 1)
+            {
+                LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_NACK);
+                LL_I2C_GenerateStopCondition(I2C1);
+            }
+
+            while (!LL_I2C_IsActiveFlag_RXNE(I2C1));
+            buffer[i] = LL_I2C_ReceiveData8(I2C1);
+        }
+    }
+}
+
+
+
+bool I2C_IsDeviceReady_LL(I2C_TypeDef *I2Cx,
+                          uint8_t devAddr,
+                          uint32_t timeout)
+{
+    uint32_t tick = 0;
+
+    // wait until bus is free
+    while (LL_I2C_IsActiveFlag_BUSY(I2Cx))
+    {
+        if (tick++ > timeout)
+            return false;
+    }
+
+    // START
+    LL_I2C_GenerateStartCondition(I2Cx);
+    while (!LL_I2C_IsActiveFlag_SB(I2Cx))
+    {
+        if (tick++ > timeout)
+            return false;
+    }
+
+    // send address + WRITE
+    LL_I2C_TransmitData8(I2Cx, devAddr << 1);
+
+    while (1)
+    {
+        // ACK received
+        if (LL_I2C_IsActiveFlag_ADDR(I2Cx))
+        {
+            LL_I2C_ClearFlag_ADDR(I2Cx);
+            LL_I2C_GenerateStopCondition(I2Cx);
+            return true;
+        }
+
+        // NACK received
+        if (LL_I2C_IsActiveFlag_AF(I2Cx))
+        {
+            LL_I2C_ClearFlag_AF(I2Cx);
+            LL_I2C_GenerateStopCondition(I2Cx);
+            return false;
+        }
+
+        if (tick++ > timeout)
+        {
+            LL_I2C_GenerateStopCondition(I2Cx);
+            return false;
+        }
+    }
+}
+
+
+
+void ICM20602_INIT()
+{
+	uint8_t data[2];
+
+	if (I2C_IsDeviceReady_LL(I2C1, ICM20602_ADDRESS, 1000))
+	{
+		printf("VSE READY \r\n");
+		data[0] = REG_SLEEP_PLL; // PWR_MGMT_1
+		data[1] = WAKE_AND_PLL; // wake up
+		I2C_Write(ICM20602_ADDRESS, data, 2);
+		HAL_Delay(500);
+
+		data[0] = REG_DLPF; //
+		data[1] = BANDWIDTH; //
+		I2C_Write(ICM20602_ADDRESS, data, 2);
+
+		data[0] = REG_DLPF_ACC; //
+		data[1] = BANDWIDTH_ACC; //
+		I2C_Write(ICM20602_ADDRESS, data, 2);
+
+		data[0] = REG_SAMPLE_DIV; //
+		data[1] = FS500; //
+		I2C_Write(ICM20602_ADDRESS, data, 2);
+
+		data[0] = REG_CONFIG_GYRO; //
+		data[1] = FS_GYRO_2000; //
+		I2C_Write(ICM20602_ADDRESS, data, 2);
+
+		data[0] = REG_CONFIG_ACC; //
+		data[1] = FS_ACC_8G; //
+		I2C_Write(ICM20602_ADDRESS, data, 2);
+
+		data[0] = FIFO_OFF_REG; //
+		data[1] = FIFO_OFF; //
+		I2C_Write(ICM20602_ADDRESS, data, 2);
+
+		data[0] = FIFO_DENIED_REG; //
+		data[1] = FIFO; //
+		I2C_Write(ICM20602_ADDRESS, data, 2);
+
+		Calibrate_Gyro_LL();
+	}
+}
+
+void LL_ReadY_Gyro()
+{
+    I2C_Read(ICM20602_ADDRESS, REG_DATA_GYRO_Y, raw_gyro, 2);
+    gyroY_raw = (int16_t)((raw_gyro[0] << 8) | raw_gyro[1]);
+    gyroY_raw -= offset_y;
+    gyro_y = ((float)gyroY_raw/16.4);
+}
+
+void Calibrate_Gyro_LL()
+{
+	float gyro_y_cal = 0;
+
+	for (int i = 0; i < 1000; i++) {
+		I2C_Read(ICM20602_ADDRESS, REG_DATA_GYRO_Y, raw_gyro, 2);
+	    gyroY_raw = (int16_t)((raw_gyro[0] << 8) | raw_gyro[1]);
+		gyro_y_cal += gyroY_raw;
+		HAL_Delay(1);
+	}
+	offset_y = ((float)gyro_y_cal / 1000);
+	printf("OFFSET_GYRO: %.5f", offset_y);
+}
+
+void LL_Read_Acc()
+{
+	int16_t acc_x_raw, acc_y_raw, acc_z_raw;
+	float acc_x, acc_y, acc_z, rad_XZ;
+    I2C_Read(ICM20602_ADDRESS, REG_DATA_ACC, raw, 6);
+
+    acc_x_raw = (raw[0] << 8) | raw[1];
+    acc_y_raw = (raw[2] << 8) | raw[3];
+    acc_z_raw = (raw[4] << 8) | raw[5];
+
+    acc_x = ((float)acc_x_raw /2048.0);
+	acc_y = ((float)acc_y_raw /2048.0);
+	acc_z = ((float)acc_z_raw /2048.0);
+	rad_XZ  = atan2f(acc_x, acc_z);
+	//rad_XZ = atan2f(-acc_x, sqrt(acc_y*acc_y + acc_z*acc_z));
+	deg_XZ = (rad_XZ*RAD2DEG);
+}
+*/
+

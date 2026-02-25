@@ -60,6 +60,7 @@ typedef enum { GFS_250=0, GFS_500=1, GFS_1000=2, GFS_2000=3 } icm_gyro_fs_t;
 
 typedef struct{
 	float angle;
+	float gyro_integral_raw;
 }CompFilter;
 
 

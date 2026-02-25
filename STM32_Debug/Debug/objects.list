@@ -1,4 +1,5 @@
 "./Core/Src/ICM20602.o"
+"./Core/Src/ICM20602_LL.o"
 "./Core/Src/ODrive_CubeIDE_glue.o"
 "./Core/Src/llcp.o"
 "./Core/Src/llcp_lib.o"
@@ -27,6 +28,7 @@
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o"
+"./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_dma.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_exti.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_gpio.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_rcc.o"

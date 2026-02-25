@@ -1,36 +1,17 @@
-11:52:04 **** Incremental Build of configuration Debug for project STM32_Debug ****
+13:23:34 **** Incremental Build of configuration Debug for project STM32_Debug ****
 make -j12 all 
-arm-none-eabi-gcc "../Core/Src/ICM20602.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -DUSE_FULL_LL_DRIVER -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/ICM20602.d" -MT"Core/Src/ICM20602.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/ICM20602.o"
-../Core/Src/ICM20602.c: In function 'Calibrate_GYRO':
-../Core/Src/ICM20602.c:65:35: warning: unused variable 'ret' [-Wunused-variable]
-   65 |                 HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(&hi2c1, (ICM20602_ADDRESS<<1) + 1, REG_DATA_GYRO_Y, 1, raw_gyro, 2, 100);
-      |                                   ^~~
-../Core/Src/ICM20602.c: In function 'ICM20602_Init':
-../Core/Src/ICM20602.c:85:13: warning: unused variable 'v' [-Wunused-variable]
-   85 |     uint8_t v;
-      |             ^
-../Core/Src/ICM20602.c:84:23: warning: unused variable 'st' [-Wunused-variable]
-   84 |     HAL_StatusTypeDef st;
-      |                       ^~
-../Core/Src/ICM20602.c: In function 'Read_Data_ACC':
-../Core/Src/ICM20602.c:199:22: warning: variable 'acc_y' set but not used [-Wunused-but-set-variable]
-  199 |         float acc_x, acc_y, acc_z, rad_XZ;
-      |                      ^~~~~
-../Core/Src/ICM20602.c: In function 'ICM20602_Init':
-../Core/Src/ICM20602.c:126:1: warning: control reaches end of non-void function [-Wreturn-type]
-  126 | }
-      | ^
+arm-none-eabi-g++ "../Core/Src/main.cpp" -mcpu=cortex-m4 -std=gnu++14 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -DUSE_FULL_LL_DRIVER -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
 arm-none-eabi-g++ -o "STM32_Debug.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/kamil/STM32CubeIDE/workspace_1.19.0/STM32_Debug/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32_Debug.map" -Wl,--gc-sections -static -u_printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 Finished building target: STM32_Debug.elf
  
 arm-none-eabi-size  STM32_Debug.elf 
 arm-none-eabi-objdump -h -S STM32_Debug.elf  > "STM32_Debug.list"
    text	   data	    bss	    dec	    hex	filename
-  44220	    476	   2276	  46972	   b77c	STM32_Debug.elf
+  42620	    472	   2264	  45356	   b12c	STM32_Debug.elf
 Finished building: default.size.stdout
  
 Finished building: STM32_Debug.list
  
 
-11:52:05 Build Finished. 0 errors, 5 warnings. (took 922ms)
+13:23:35 Build Finished. 0 errors, 0 warnings. (took 814ms)
 
