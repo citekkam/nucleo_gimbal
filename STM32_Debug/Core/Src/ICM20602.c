@@ -8,14 +8,15 @@
 extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart2;
 
-
 uint8_t data_acc[6];
+uint8_t data[14];
 float offset_y = 0;
 float gyro_y;
 float deg_XZ;
 static uint32_t prev_time = 0;
 int16_t gyro_y_raw;
 uint8_t data_gyro[2];
+extern uint8_t dma_done;
 
 
 void Print2Console(const char* msg1, const char* msg2, int ret)
@@ -105,9 +106,9 @@ void I2C_Bus_Recover() {
     // 2. Poslat 9 pulsů na SCL
     for (int i = 0; i < 9; i++) {
         HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
-        HAL_Delay(1); // 500 Hz je víc než dost
+        for(volatile int i=0; i<2000; i++);
         HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
-        HAL_Delay(1);
+        for(volatile int i=0; i<2000; i++);
 
         // Pokud SDA naskočí do 1, senzor už linku pustil
         if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == GPIO_PIN_SET) {
@@ -122,49 +123,121 @@ void I2C_Bus_Recover() {
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
-    HAL_Delay(1);
+    for(volatile int i=0; i<2000; i++);
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
-    HAL_Delay(1);
+    for(volatile int i=0; i<2000; i++);
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
-    HAL_Delay(1);
+    for(volatile int i=0; i<2000; i++);
 
     // 4. Vrátit piny zpět do I2C režimu (to udělá HAL_I2C_Init)
 }
 
-void Read_Gyro() {
-	HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(&hi2c1, (ICM20602_ADDRESS<<1), REG_DATA_GYRO_Y, 1, data_gyro, 2, 1);
+HAL_StatusTypeDef Read_Gyro() {
+	HAL_StatusTypeDef ret = HAL_I2C_Mem_Read_DMA(&hi2c1, (ICM20602_ADDRESS<<1), REG_DATA_GYRO_Y, 1, data_gyro, 2);
 	if (ret != HAL_OK) {
 		HAL_I2C_DeInit(&hi2c1);
 		I2C_Bus_Recover();
 		HAL_I2C_Init(&hi2c1);
 	}
 
-	gyro_y_raw = (int16_t)((data_gyro[0] << 8) | data_gyro[1]);
-	gyro_y_raw -= offset_y;
-	gyro_y = ((float)gyro_y_raw/GYRO_SCALE);
+	if (dma_done) {
+		dma_done = 0;
+		gyro_y_raw = (int16_t)((data_gyro[0] << 8) | data_gyro[1]);
+		gyro_y_raw -= offset_y;
+		gyro_y = ((float)gyro_y_raw/GYRO_SCALE);
+	}
+
+	return ret;
 }
 
-void Read_Data_ACC()
+HAL_StatusTypeDef Read_Data_ACC()
 {
 	int16_t acc_x_raw, acc_y_raw, acc_z_raw;
  	float acc_x, acc_y, acc_z, rad_XZ;
 
- 	HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(&hi2c1, (ICM20602_ADDRESS<<1), REG_DATA_ACC, 1, data_acc, 6, 1);
+ 	HAL_StatusTypeDef ret = HAL_I2C_Mem_Read_DMA(&hi2c1, (ICM20602_ADDRESS<<1), REG_DATA_ACC, 1, data_acc, 6);
 	if (ret != HAL_OK) {
 		HAL_I2C_DeInit(&hi2c1);
 		I2C_Bus_Recover();
 		HAL_I2C_Init(&hi2c1);
 	}
 
-	acc_x_raw = (int16_t)((data_acc[0] << 8) + data_acc[1]);
-	acc_y_raw = (int16_t)((data_acc[2] << 8) + data_acc[3]);
-	acc_z_raw = (int16_t)((data_acc[4] << 8) + data_acc[5]);
-	acc_x = ((float)acc_x_raw /ACC_SCALE);
-	acc_y = ((float)acc_y_raw /ACC_SCALE);
-	acc_z = ((float)acc_z_raw /ACC_SCALE);
-	rad_XZ = atan2f(acc_x, acc_z);
-	//rad_XZ = atan2f(-acc_x, sqrt(acc_y*acc_y + acc_z*acc_z));
-	deg_XZ = (rad_XZ*RAD2DEG);
+	if (dma_done) {
+		dma_done = 0;
+		acc_x_raw = (int16_t)((data_acc[0] << 8) + data_acc[1]);
+		acc_y_raw = (int16_t)((data_acc[2] << 8) + data_acc[3]);
+		acc_z_raw = (int16_t)((data_acc[4] << 8) + data_acc[5]);
+		acc_x = ((float)acc_x_raw /ACC_SCALE);
+		acc_y = ((float)acc_y_raw /ACC_SCALE);
+		acc_z = ((float)acc_z_raw /ACC_SCALE);
+		rad_XZ = atan2f(acc_x, acc_z);
+		//rad_XZ = atan2f(-acc_x, sqrt(acc_y*acc_y + acc_z*acc_z));
+		deg_XZ = (rad_XZ*RAD2DEG);
+	}
+
+	return ret;
+}
+
+void Read_data()
+{
+	HAL_I2C_Mem_Read_DMA(&hi2c1, (ICM20602_ADDRESS<<1), REG_DATA_ACC, 1, data, 14);
+}
+
+void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
+{
+    if(hi2c->Instance == I2C1) {
+    	static int16_t acc_x_raw, acc_y_raw, acc_z_raw;
+		static float acc_x, acc_y, acc_z, rad_XZ;
+
+    	acc_x_raw = (int16_t)((data[0] << 8) + data[1]);
+		acc_y_raw = (int16_t)((data[2] << 8) + data[3]);
+		acc_z_raw = (int16_t)((data[4] << 8) + data[5]);
+		acc_x = ((float)acc_x_raw /ACC_SCALE);
+		acc_y = ((float)acc_y_raw /ACC_SCALE);
+		acc_z = ((float)acc_z_raw /ACC_SCALE);
+		rad_XZ = atan2f(acc_x, acc_z);
+		//rad_XZ = atan2f(-acc_x, sqrt(acc_y*acc_y + acc_z*acc_z));
+		deg_XZ = (rad_XZ*RAD2DEG);
+
+		gyro_y_raw = (int16_t)((data[10] << 8) | data[11]);
+		gyro_y_raw -= offset_y;
+		gyro_y = ((float)gyro_y_raw/GYRO_SCALE);
+
+        dma_done = 1;
+
+        //TODO: zkusit jesli pribiha callback pomoci printf
+    }
+}
+
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
+{
+    if (hi2c->Instance == I2C1)
+    {
+		printf("ERROR \r\n");
+
+        uint32_t err = HAL_I2C_GetError(hi2c);
+
+        // 1. Stop DMA safely
+        if (hi2c->hdmarx != NULL)
+		   HAL_DMA_Abort(hi2c->hdmarx);
+
+	    if (hi2c->hdmatx != NULL)
+		   HAL_DMA_Abort(hi2c->hdmatx);
+        // 2. Optional: store error for debugging
+        //i2c_last_error = err;
+        //i2c_error_flag = 1;
+
+        // 3. If severe error → reset peripheral
+        if (err != HAL_I2C_ERROR_AF)   // AF = NACK (usually harmless)
+        {
+            HAL_I2C_DeInit(hi2c);
+            I2C_Bus_Recover();
+            HAL_I2C_Init(hi2c);
+        }
+
+        // 4. Make sure your state machine is not stuck
+        dma_done = 0;
+    }
 }
 
 void CF_Init(CompFilter *filter, float angle_init)

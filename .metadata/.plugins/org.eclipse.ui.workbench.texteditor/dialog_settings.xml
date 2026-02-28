@@ -3,6 +3,9 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="true"/>
 	<list key="searchhistory">
+		<item value="DMA"/>
+		<item value="HAL_I2C_MemRxCpltCallback"/>
+		<item value="HAL_I2C_Mem_Read_IT"/>
 		<item value="raw_gyro"/>
 		<item value="degree"/>
 		<item value="alpha"/>
@@ -15,9 +18,6 @@
 		<item value="write"/>
 		<item value="can"/>
 		<item value="tim10"/>
-		<item value="while(1"/>
-		<item value="mx_tim"/>
-		<item value="HAL_NVIC"/>
 	</list>
 	<list key="replacehistory">
 		<item value="data_gyro"/>

@@ -58,14 +58,15 @@ typedef struct{
 }CompFilter;
 
 
-void Read_Gyro();
+HAL_StatusTypeDef Read_Gyro();
 void Calibrate_GYRO();
-void Read_Data_ACC();
+HAL_StatusTypeDef Read_Data_ACC();
 void CF_Init(CompFilter *filter, float angle_init);
 void CF_Update(CompFilter *filter, float gyro, float acc_angle, float start);
 void ICM20602_Init();
 void I2C_Bus_Recover();
 void Print2Console(const char* msg1, const char* msg2, int ret);
+void Read_data();
 
 
 #ifdef __cplusplus
