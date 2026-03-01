@@ -3,21 +3,21 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="true"/>
 	<list key="searchhistory">
+		<item value="prev_time"/>
+		<item value="msg5"/>
+		<item value="count_limit"/>
+		<item value="led_diode"/>
+		<item value="cf_update_count"/>
+		<item value="last_print_time"/>
+		<item value="exponent"/>
+		<item value="target_pos"/>
+		<item value="first_pos"/>
+		<item value="error_position"/>
+		<item value="acc_cnt"/>
+		<item value="feedback_counter"/>
 		<item value="DMA"/>
 		<item value="HAL_I2C_MemRxCpltCallback"/>
 		<item value="HAL_I2C_Mem_Read_IT"/>
-		<item value="raw_gyro"/>
-		<item value="degree"/>
-		<item value="alpha"/>
-		<item value="count_limit"/>
-		<item value="HAL_Delay"/>
-		<item value="HAL_I2C_Init"/>
-		<item value="cf_update_count"/>
-		<item value="target_pos"/>
-		<item value="last_print_time"/>
-		<item value="write"/>
-		<item value="can"/>
-		<item value="tim10"/>
 	</list>
 	<list key="replacehistory">
 		<item value="data_gyro"/>

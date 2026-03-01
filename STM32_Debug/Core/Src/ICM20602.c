@@ -13,10 +13,10 @@ uint8_t data[14];
 float offset_y = 0;
 float gyro_y;
 float deg_XZ;
-static uint32_t prev_time = 0;
 int16_t gyro_y_raw;
 uint8_t data_gyro[2];
 extern uint8_t dma_done;
+uint8_t i2c_need_recovery = 0;
 
 
 void Print2Console(const char* msg1, const char* msg2, int ret)
@@ -205,7 +205,6 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 
         dma_done = 1;
 
-        //TODO: zkusit jesli pribiha callback pomoci printf
     }
 }
 
@@ -213,29 +212,14 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 {
     if (hi2c->Instance == I2C1)
     {
-		printf("ERROR \r\n");
-
-        uint32_t err = HAL_I2C_GetError(hi2c);
-
-        // 1. Stop DMA safely
         if (hi2c->hdmarx != NULL)
 		   HAL_DMA_Abort(hi2c->hdmarx);
 
 	    if (hi2c->hdmatx != NULL)
 		   HAL_DMA_Abort(hi2c->hdmatx);
-        // 2. Optional: store error for debugging
-        //i2c_last_error = err;
-        //i2c_error_flag = 1;
 
-        // 3. If severe error → reset peripheral
-        if (err != HAL_I2C_ERROR_AF)   // AF = NACK (usually harmless)
-        {
-            HAL_I2C_DeInit(hi2c);
-            I2C_Bus_Recover();
-            HAL_I2C_Init(hi2c);
-        }
+	    i2c_need_recovery = 1;
 
-        // 4. Make sure your state machine is not stuck
         dma_done = 0;
     }
 }

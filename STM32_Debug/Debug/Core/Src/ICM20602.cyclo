@@ -6,6 +6,6 @@
 ../Core/Src/ICM20602.c:153:19:Read_Data_ACC	3
 ../Core/Src/ICM20602.c:181:6:Read_data	1
 ../Core/Src/ICM20602.c:186:6:HAL_I2C_MemRxCpltCallback	2
-../Core/Src/ICM20602.c:212:6:HAL_I2C_ErrorCallback	5
-../Core/Src/ICM20602.c:243:6:CF_Init	1
-../Core/Src/ICM20602.c:248:6:CF_Update	1
+../Core/Src/ICM20602.c:211:6:HAL_I2C_ErrorCallback	4
+../Core/Src/ICM20602.c:227:6:CF_Init	1
+../Core/Src/ICM20602.c:232:6:CF_Update	1
