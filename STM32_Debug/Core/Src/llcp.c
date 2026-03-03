@@ -55,14 +55,14 @@ void send_heartbeat() {
   LL_UART_SendBuffer(USART2, tx_buffer, msg_len);
 }
 
-void send_imu(uint8_t angle_data) {
+void send_imu(uint8_t id, uint8_t angle_data, uint8_t angle_drone) {
 	imu_msg my_msg_imu;
 	uint16_t msg_len;
 
-	my_msg_imu.id = 10;
+	my_msg_imu.id = id;
 	//my_msg_imsu.t_ms = 42;
-	my_msg_imu.angle = 2;
-	my_msg_imu.drone_angle = 3;
+	my_msg_imu.angle = angle_data;
+	my_msg_imu.drone_angle = angle_drone;
 
 	// llcp_prepareMessage will fill your TX buffer
 	msg_len = llcp_prepareMessage((uint8_t*)&my_msg_imu, sizeof(my_msg_imu), tx_buffer);
@@ -72,7 +72,7 @@ void send_imu(uint8_t angle_data) {
 }
 
 
-bool receive_message(void)
+bool receive_message()
 {
   bool got_valid_msg = false;
   LLCP_Message_t *llcp_message_ptr = NULL;
@@ -100,8 +100,7 @@ bool receive_message(void)
 			  break;
 			}
             case RECIEVE_MSG: {
-              recieve_msg *m = (recieve_msg *)llcp_message_ptr;
-              recieved_value = m->value;
+              memcpy(&recieved_msg, llcp_message_ptr->payload, sizeof(recieve_msg));
               got_valid_msg = true;
               break;
             }

@@ -38,8 +38,9 @@ typedef struct __attribute__((__packed__))
 }recieve_msg;
 
 void send_heartbeat();
-void send_imu(uint8_t angle_data);
-bool receive_message(void);
+void send_imu(uint8_t id, uint8_t angle_data, uint8_t angle_drone);
+bool receive_message();
+extern recieve_msg recieved_msg;
 
 #ifdef __cplusplus
 }

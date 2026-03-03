@@ -1,3 +1,8 @@
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:1792:26:LL_USART_IsActiveFlag_RXNE	1
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:1803:26:LL_USART_IsActiveFlag_TC	1
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:1814:26:LL_USART_IsActiveFlag_TXE	1
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:2403:25:LL_USART_ReceiveData8	1
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:2426:22:LL_USART_TransmitData8	1
 ../Core/Src/llcp.c:27:6:LL_UART_SendBuffer	4
 ../Core/Src/llcp.c:40:6:send_heartbeat	1
 ../Core/Src/llcp.c:58:6:send_imu	1

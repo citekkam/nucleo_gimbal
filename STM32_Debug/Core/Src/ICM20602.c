@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 extern I2C_HandleTypeDef hi2c1;
-extern UART_HandleTypeDef huart2;
+//extern UART_HandleTypeDef huart2;
 
 uint8_t data_acc[6];
 uint8_t data[14];
@@ -44,7 +44,7 @@ void Calibrate_GYRO()
 	}
 	offset_y = ((float)gyro_y_cal / 1000);
 
-	printf("OFFSET: %.5f\r\n",offset_y);
+	//printf("OFFSET: %.5f\r\n",offset_y);
 }
 
 void ICM20602_Init()

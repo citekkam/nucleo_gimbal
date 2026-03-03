@@ -20,7 +20,7 @@ extern "C" {
 
 // should we send '\n' after each packet?
 #ifndef LLCP_APPEND_ENDL
-#define LLCP_APPEND_ENDL 0
+#define LLCP_APPEND_ENDL 1
 #endif
 
 #ifndef LLCP_DEBUG_PRINT

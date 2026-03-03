@@ -3,6 +3,7 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="true"/>
 	<list key="searchhistory">
+		<item value="printf"/>
 		<item value="prev_time"/>
 		<item value="msg5"/>
 		<item value="count_limit"/>
@@ -17,7 +18,6 @@
 		<item value="feedback_counter"/>
 		<item value="DMA"/>
 		<item value="HAL_I2C_MemRxCpltCallback"/>
-		<item value="HAL_I2C_Mem_Read_IT"/>
 	</list>
 	<list key="replacehistory">
 		<item value="data_gyro"/>
