@@ -3,6 +3,7 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="true"/>
 	<list key="searchhistory">
+		<item value="error_position"/>
 		<item value="printf"/>
 		<item value="prev_time"/>
 		<item value="msg5"/>
@@ -13,13 +14,13 @@
 		<item value="exponent"/>
 		<item value="target_pos"/>
 		<item value="first_pos"/>
-		<item value="error_position"/>
 		<item value="acc_cnt"/>
 		<item value="feedback_counter"/>
 		<item value="DMA"/>
 		<item value="HAL_I2C_MemRxCpltCallback"/>
 	</list>
 	<list key="replacehistory">
+		<item value="motor_position"/>
 		<item value="data_gyro"/>
 		<item value="hcan"/>
 		<item value="AHBENR"/>

@@ -29,23 +29,23 @@
 ../Core/Inc/ODrive_CubeIDE_glue.h:24:1:static void wrap_can_intf(CubeCANInterface&)::<lambda(void*)>::_FUN(void*)	1
 ../Core/Inc/ODrive_CubeIDE_glue.h:24:1:wrap_can_intf(CubeCANInterface&)::<lambda(void*)>::operator void (*)(void*)() const	1
 ../Core/Inc/ODrive_CubeIDE_glue.h:24:1:ODriveCanIntfWrapper wrap_can_intf(CubeCANInterface&)	1
-../Core/Src/main.cpp:95:6:void onHeartbeat(Heartbeat_msg_t&, void*)	1
-../Core/Src/main.cpp:108:6:void onFeedback(Get_Encoder_Estimates_msg_t&, void*)	1
-../Core/Src/main.cpp:129:5:int main()	13
-../Core/Src/main.cpp:379:6:void SystemClock_Config()	3
-../Core/Src/main.cpp:427:13:void MX_CAN1_Init()	2
-../Core/Src/main.cpp:464:13:void MX_I2C1_Init()	2
-../Core/Src/main.cpp:498:13:void MX_TIM6_Init()	1
-../Core/Src/main.cpp:535:13:void MX_TIM10_Init()	1
-../Core/Src/main.cpp:567:13:void MX_USART2_UART_Init()	1
-../Core/Src/main.cpp:616:13:void MX_DMA_Init()	1
-../Core/Src/main.cpp:634:13:void MX_GPIO_Init()	1
-../Core/Src/main.cpp:683:5:int __io_putchar(int)	2
-../Core/Src/main.cpp:693:5:int _write(int, char*, int)	4
-../Core/Src/main.cpp:706:6:void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef*)	1
-../Core/Src/main.cpp:733:6:void imu_callback()	2
-../Core/Src/main.cpp:766:6:void Error_Handler()	1
+../Core/Src/main.cpp:96:6:void onHeartbeat(Heartbeat_msg_t&, void*)	1
+../Core/Src/main.cpp:109:6:void onFeedback(Get_Encoder_Estimates_msg_t&, void*)	1
+../Core/Src/main.cpp:130:5:int main()	21
+../Core/Src/main.cpp:433:6:void SystemClock_Config()	3
+../Core/Src/main.cpp:481:13:void MX_CAN1_Init()	2
+../Core/Src/main.cpp:518:13:void MX_I2C1_Init()	2
+../Core/Src/main.cpp:552:13:void MX_TIM6_Init()	1
+../Core/Src/main.cpp:589:13:void MX_TIM10_Init()	1
+../Core/Src/main.cpp:621:13:void MX_USART2_UART_Init()	1
+../Core/Src/main.cpp:670:13:void MX_DMA_Init()	1
+../Core/Src/main.cpp:688:13:void MX_GPIO_Init()	1
+../Core/Src/main.cpp:737:5:int __io_putchar(int)	2
+../Core/Src/main.cpp:747:5:int _write(int, char*, int)	4
+../Core/Src/main.cpp:760:6:void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef*)	1
+../Core/Src/main.cpp:787:6:void imu_callback()	2
+../Core/Src/main.cpp:820:6:void Error_Handler()	1
 ../Core/Inc/ODrive/can_helpers.hpp:16:3:T can_get_signal_raw(const uint8_t*, size_t, size_t, bool) [with T = float]	4
 ../Core/Inc/ODrive/ODriveCAN.h:283:10:bool ODriveCAN::request(T&, uint16_t) [with T = Get_Bus_Voltage_Current_msg_t]	2
-../Core/Src/main.cpp:775:1:void __static_initialization_and_destruction_0()	1
-../Core/Src/main.cpp:775:1:cpp)	1
+../Core/Src/main.cpp:829:1:void __static_initialization_and_destruction_0()	1
+../Core/Src/main.cpp:829:1:cpp)	1

@@ -71,6 +71,20 @@ void send_imu(uint8_t id, uint8_t angle_data, uint8_t angle_drone) {
 	LL_UART_SendBuffer(USART2, tx_buffer, msg_len);
 }
 
+void send_ACK(uint8_t id)
+{
+	ACK_msg my_ACK_msg;
+	uint16_t msg_len;
+
+	my_ACK_msg.id = id;
+
+	// llcp_prepareMessage will fill your TX buffer
+	msg_len = llcp_prepareMessage((uint8_t*)&my_ACK_msg, sizeof(my_ACK_msg), tx_buffer);
+
+	// Odeslání přes LL
+	LL_UART_SendBuffer(USART2, tx_buffer, msg_len);
+}
+
 
 bool receive_message()
 {
@@ -99,11 +113,24 @@ bool receive_message()
 			  got_valid_msg = true;
 			  break;
 			}
-            case RECIEVE_MSG: {
+            case REFERENCE_ANGLE_ID: {
               memcpy(&recieved_msg, llcp_message_ptr->payload, sizeof(recieve_msg));
               got_valid_msg = true;
               break;
             }
+
+            case START: {
+			  memcpy(&recieved_msg, llcp_message_ptr->payload, sizeof(recieve_msg));
+			  got_valid_msg = true;
+			  break;
+			}
+            case STOP: {
+			  memcpy(&recieved_msg, llcp_message_ptr->payload, sizeof(recieve_msg));
+			  got_valid_msg = true;
+			  break;
+			}
+
+
             default: break;
           }
           // Pokud jsme zpracovali celou zprávu, můžeme vrátit true okamžitě,

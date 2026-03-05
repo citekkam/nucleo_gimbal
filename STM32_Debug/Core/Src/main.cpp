@@ -61,17 +61,18 @@ I2C_HandleTypeDef hi2c1;
 DMA_HandleTypeDef hdma_i2c1_rx;
 
 /* USER CODE BEGIN PV */
-extern float gyro_y;
-extern float deg_XZ;
+extern volatile float gyro_y;
+extern volatile float deg_XZ;
 CompFilter filter;
 recieve_msg recieved_msg;
-float error_position = 0;
+float motor_position = 0;
 float reference_angle = 0;
 volatile uint8_t dma_done = 0;
 static uint8_t send_pos = 0;
 extern uint8_t i2c_need_recovery;
 uint8_t position_enable = 0;
-uint8_t start_time_ms;
+static uint32_t start_time_ms = 0;
+uint8_t start = 0;
 
 //--------------------------ODrive----------------------------------
 CubeCANInterface can_intf = {&hcan1};
@@ -249,7 +250,7 @@ int main(void)
 /*
  *
 
-    printf("Close loop \r\n");
+    //printf("Close loop \r\n");
 
     while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL) {
 
@@ -270,11 +271,12 @@ int main(void)
     	}
     }
 
-    printf("ODrive Running \r\n");
+    //printf("ODrive Running \r\n");
 
     odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
- */
     start_time_ms = HAL_GetTick();
+ */
+	  odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
 
 
     ///////////////////////////////////////////////////////////////
@@ -305,20 +307,71 @@ int main(void)
 
 	  if (message_received) {
 		  switch(recieved_msg.id) {
-		  case 51:
-			  //send_imu(IMU_MSG_ID, filter.angle, feedback.Pos_Estimate);
-			  break;
-		  case 42:
-			  reference_angle = recieved_msg.value;
-			  send_imu(REFERENCE_ANGLE_ID, 0, 0);
+			  case START: // zapnout
+				  send_ACK(recieved_msg.id);
+
+				  while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL) {
+
+					odrv0.clearErrors();
+
+					HAL_Delay(1);
+
+					odrv0.setState(ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL);
 
 
-			  // pokazde dojde k restartu, nebo minimalne na zacatku, pokud odrive nebezi, jak se musi pockat
+					// Wait 150ms for state to take effect
+
+					for (int i = 0; i < 15; ++i) {
+
+						HAL_Delay(10);
+
+						pumpEvents(can_intf); // Keep checking for heartbeats
+					}
+				  }
+
+				  //printf("ODrive Running \r\n");
+
+				  //odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
+				  HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_SET);
+
+				  start_time_ms = HAL_GetTick();
+
+				  break;
+			  case STOP: //vypnout
+				  send_ACK(recieved_msg.id);
+				  position_enable = 0;
+
+				  while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_IDLE) {
+
+					odrv0.clearErrors();
+
+					HAL_Delay(1);
+
+					odrv0.setState(ODriveAxisState::AXIS_STATE_IDLE);
 
 
-			  break;
-		  default:
-			  break;
+					// Wait 150ms for state to take effect
+
+					for (int i = 0; i < 15; ++i) {
+
+						HAL_Delay(10);
+
+						pumpEvents(can_intf); // Keep checking for heartbeats
+					}
+				  }
+				  break;
+			  case 51: // feedback
+
+				  //send_imu(IMU_MSG_ID, filter.angle, feedback.Pos_Estimate);
+				  break;
+			  case REFERENCE_ANGLE_ID:
+				  reference_angle = (float)recieved_msg.value;
+				  send_ACK(recieved_msg.id);
+
+				  // pokazde dojde k restartu, nebo minimalne na zacatku, pokud odrive nebezi, jak se musi pockat
+				  break;
+			  default:
+				  break;
 		  }
 	  }
 
@@ -350,8 +403,8 @@ int main(void)
 
 	  if (!position_enable) {
 	      if ((HAL_GetTick() - start_time_ms) >= 5000) {
+			  HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_RESET);
 	          position_enable = 1;
-			  //printf("za 5s: %.4f \r\n", filter.angle);
 	      }
 	  }
 
@@ -360,9 +413,10 @@ int main(void)
 	  if (send_pos && position_enable) {
 		  	  send_pos = 0;
 		  	  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
-	  		  error_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)+(filter.angle/360.0f));
-
-	  	  	  odrv0.setPosition(error_position, 0.0, 0.0);
+	  		  motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)+(filter.angle/360.0f)); // zkusit omezit ((-reference_angle/360.0f)+(filter.angle/360.0f)), na maximalni prirustek 20 stupnu
+              if (motor_position >= -0.25 && motor_position <=0.25) {
+            	  odrv0.setPosition(motor_position, 0.0, 0.0);
+              }
 	  }
 
     /* USER CODE END WHILE */
