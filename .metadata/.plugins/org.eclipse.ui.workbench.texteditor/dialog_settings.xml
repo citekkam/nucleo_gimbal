@@ -3,8 +3,9 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="true"/>
 	<list key="searchhistory">
-		<item value="error_position"/>
+		<item value="hi2c1"/>
 		<item value="printf"/>
+		<item value="error_position"/>
 		<item value="prev_time"/>
 		<item value="msg5"/>
 		<item value="count_limit"/>
@@ -17,9 +18,9 @@
 		<item value="acc_cnt"/>
 		<item value="feedback_counter"/>
 		<item value="DMA"/>
-		<item value="HAL_I2C_MemRxCpltCallback"/>
 	</list>
 	<list key="replacehistory">
+		<item value="hi2c3"/>
 		<item value="motor_position"/>
 		<item value="data_gyro"/>
 		<item value="hcan"/>

@@ -1,17 +1,20 @@
-13:45:03 **** Incremental Build of configuration Debug for project STM32_Debug ****
+19:08:49 **** Incremental Build of configuration Debug for project STM32_Debug ****
 make -j12 all 
-arm-none-eabi-gcc "../Core/Src/stm32f4xx_it.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -DUSE_FULL_LL_DRIVER -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/stm32f4xx_it.d" -MT"Core/Src/stm32f4xx_it.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32f4xx_it.o"
+arm-none-eabi-g++ "../Core/Src/main.cpp" -mcpu=cortex-m4 -std=gnu++14 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -DUSE_FULL_LL_DRIVER -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.cpp:74:17: warning: 'start_time_ms' defined but not used [-Wunused-variable]
+   74 | static uint32_t start_time_ms = 0;
+      |                 ^~~~~~~~~~~~~
 arm-none-eabi-g++ -o "STM32_Debug.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/kamil/STM32CubeIDE/workspace_1.19.0/STM32_Debug/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32_Debug.map" -Wl,--gc-sections -static -u_printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 Finished building target: STM32_Debug.elf
  
 arm-none-eabi-size  STM32_Debug.elf 
 arm-none-eabi-objdump -h -S STM32_Debug.elf  > "STM32_Debug.list"
    text	   data	    bss	    dec	    hex	filename
-  57492	    472	   2864	  60828	   ed9c	STM32_Debug.elf
+  57540	    476	   2860	  60876	   edcc	STM32_Debug.elf
 Finished building: default.size.stdout
  
 Finished building: STM32_Debug.list
  
 
-13:45:04 Build Finished. 0 errors, 0 warnings. (took 756ms)
+19:08:49 Build Finished. 0 errors, 1 warnings. (took 485ms)
 

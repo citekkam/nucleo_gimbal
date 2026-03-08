@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;PCB_STM/Core/Src/ODrive_CubeIDE_glue.cpp&apos;" deleteContents="false" description="Delete resource &apos;PCB_STM/Core/Src/ODrive_CubeIDE_glue.cpp&apos;" element1="/PCB_STM/Core/Src/ODrive_CubeIDE_glue.cpp" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1772961615947"/>
+</session>

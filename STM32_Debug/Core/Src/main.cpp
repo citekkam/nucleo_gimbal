@@ -70,9 +70,10 @@ float reference_angle = 0;
 volatile uint8_t dma_done = 0;
 static uint8_t send_pos = 0;
 extern uint8_t i2c_need_recovery;
-uint8_t position_enable = 0;
+uint8_t static position_enable = 1;
 static uint32_t start_time_ms = 0;
-uint8_t start = 0;
+uint8_t running = 0;
+uint32_t value = 0;
 
 //--------------------------ODrive----------------------------------
 CubeCANInterface can_intf = {&hcan1};
@@ -247,11 +248,11 @@ int main(void)
 
     // K teto funkci pridam flag a ktery pridam do podminky v cekani po startu a posilani setPointu
 
-/*
- *
+
 
     //printf("Close loop \r\n");
 
+/*
     while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL) {
 
     	odrv0.clearErrors();
@@ -276,7 +277,6 @@ int main(void)
     odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
     start_time_ms = HAL_GetTick();
  */
-	  odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
 
 
     ///////////////////////////////////////////////////////////////
@@ -301,8 +301,6 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  /*
-	   */
 	  bool message_received = receive_message();
 
 	  if (message_received) {
@@ -331,15 +329,18 @@ int main(void)
 
 				  //printf("ODrive Running \r\n");
 
-				  //odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
+				  odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
 				  HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_SET);
+				  position_enable = 0;
+				  running = 1;
+				  //start_time_ms = HAL_GetTick();
 
-				  start_time_ms = HAL_GetTick();
 
 				  break;
 			  case STOP: //vypnout
 				  send_ACK(recieved_msg.id);
-				  position_enable = 0;
+				  position_enable = 1;
+				  running = 0;
 
 				  while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_IDLE) {
 
@@ -367,8 +368,9 @@ int main(void)
 			  case REFERENCE_ANGLE_ID:
 				  reference_angle = (float)recieved_msg.value;
 				  send_ACK(recieved_msg.id);
+				  odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
+				  position_enable = 0;
 
-				  // pokazde dojde k restartu, nebo minimalne na zacatku, pokud odrive nebezi, jak se musi pockat
 				  break;
 			  default:
 				  break;
@@ -402,15 +404,29 @@ int main(void)
 	  }
 
 	  if (!position_enable) {
+		  value++;
+		  if (value >= 500000) {
+			  value = 0;
+			  HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_RESET);
+
+			  position_enable = 1;
+		  }
+		  //zkusit vypisovat tady pres UART, printf("%d\r\n",5);
+
+
+/*
+ *
 	      if ((HAL_GetTick() - start_time_ms) >= 5000) {
 			  HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_RESET);
 	          position_enable = 1;
+			  printf("%d \r\n", 6);
+
 	      }
+ */
 	  }
 
-	  /*
-	   */
-	  if (send_pos && position_enable) {
+
+	  if (send_pos && position_enable && running) {
 		  	  send_pos = 0;
 		  	  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
 	  		  motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)+(filter.angle/360.0f)); // zkusit omezit ((-reference_angle/360.0f)+(filter.angle/360.0f)), na maximalni prirustek 20 stupnu
@@ -418,6 +434,8 @@ int main(void)
             	  odrv0.setPosition(motor_position, 0.0, 0.0);
               }
 	  }
+	  /*
+	   */
 
     /* USER CODE END WHILE */
 
