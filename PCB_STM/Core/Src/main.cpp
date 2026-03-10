@@ -25,14 +25,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-//#include "ODrive/ODriveCAN.h"
-//#include "ODrive_CubeIDE_glue.h"
+#include "ODrive/ODriveCAN.h"
+#include "ODrive_CubeIDE_glue.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 /*
  *
+ */
 struct ODriveUserData {
 
 Heartbeat_msg_t last_heartbeat;
@@ -44,7 +45,6 @@ Get_Encoder_Estimates_msg_t last_feedback;
 bool received_feedback = false;
 
 };
- */
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -58,31 +58,51 @@ bool received_feedback = false;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-I2C_HandleTypeDef hi2c3;
+CAN_HandleTypeDef hcan1;
 
-UART_HandleTypeDef huart2;
+I2C_HandleTypeDef hi2c3;
+DMA_HandleTypeDef hdma_i2c3_rx;
+
+TIM_HandleTypeDef htim9;
 
 /* USER CODE BEGIN PV */
 extern volatile float gyro_y;
 extern volatile float deg_XZ;
+CompFilter filter;
+//recieve_msg recieved_msg;
+float motor_position = 0;
+float reference_angle = 0;
+volatile uint8_t dma_done = 0;
+static uint8_t send_pos = 0;
+extern uint8_t i2c_need_recovery;
+uint8_t static position_enable = 1;
+static uint32_t start_time_ms = 0;
+uint8_t running = 0;
+uint32_t value = 0;
+uint8_t send_data = 0;
 /*
  *
+ */
 CubeCANInterface can_intf = {&hcan1};
 ODriveCanIntfWrapper can_wrapper = wrap_can_intf(can_intf);
 ODriveCAN odrv0(can_wrapper, ODRV0_NODE_ID);
 
 ODriveUserData odrv0_user_data;
- */
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
+static void MX_DMA_Init(void);
 static void MX_I2C3_Init(void);
+static void MX_TIM9_Init(void);
+static void MX_CAN1_Init(void);
+static void MX_TIM6_Init(void);
+static void MX_TIM10_Init(void);
 /* USER CODE BEGIN PFP */
 /*
  *
+ */
 void onHeartbeat(Heartbeat_msg_t& msg, void* user_data) {
 
 ODriveUserData* odrv_user_data = static_cast<ODriveUserData*>(user_data);
@@ -105,7 +125,6 @@ odrv_user_data->last_feedback = msg;
 odrv_user_data->received_feedback = true;
 
 }
- */
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -142,12 +161,19 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART2_UART_Init();
+  MX_DMA_Init();
   MX_I2C3_Init();
+  MX_TIM9_Init();
+  MX_CAN1_Init();
+  MX_TIM6_Init();
+  MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
   ICM20602_Init();
+  CF_Init(&filter, 0.0);
+
   /*
    *
+   */
   odrv0.onFeedback(onFeedback, &odrv0_user_data);
   odrv0.onStatus(onHeartbeat, &odrv0_user_data);
 
@@ -249,14 +275,24 @@ int main(void)
 		pumpEvents(can_intf); // Keep checking for heartbeats
 	}
   }
+  odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
+  position_enable = 0;
+  running = 1;
 
   //printf("ODrive Running \r\n");
-   */
 
   /*
   odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
   start_time_ms = HAL_GetTick();
    */
+
+  LL_TIM_SetCounter(TIM10, 0);
+  LL_TIM_EnableCounter(TIM10);
+
+  LL_TIM_SetCounter(TIM6, 0);
+  LL_TIM_EnableIT_UPDATE(TIM6);
+  LL_TIM_EnableCounter(TIM6);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -270,9 +306,40 @@ int main(void)
 	  //uint8_t value = 5;
 	  //HAL_UART_Transmit(&huart2, &value, 1, 100);
 
-	  Read_Gyro();
-	  Read_Data_ACC();
+	  //Read_Gyro();
+	  //Read_Data_ACC();
 
+	  if (dma_done) {
+		  dma_done = 0;
+		  static uint16_t previous_tick = 0;
+
+		  uint16_t current_tick = LL_TIM_GetCounter(TIM10);
+
+		  uint16_t dt_tick = current_tick - previous_tick;
+		  float dt_float = (float)dt_tick*0.0001;
+		  previous_tick = current_tick;
+
+		  CF_Update(&filter, gyro_y, deg_XZ, dt_float);
+		  //printf("dt: %.4f \r\n", dt_float);
+		  send_pos = 1;
+	  }
+
+	  if (!position_enable) {
+		  value++;
+		  if (value >= 500000) {
+			  value = 0;
+			  position_enable = 1;
+		  }
+	  }
+
+	  if (send_pos && position_enable && running) {
+		  send_pos = 0;
+		  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
+		  motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)+(filter.angle/360.0f)); // zkusit omezit ((-reference_angle/360.0f)+(filter.angle/360.0f)), na maximalni prirustek 20 stupnu
+			if (motor_position >= -0.25 && motor_position <=0.25) {
+			  odrv0.setPosition(motor_position, 0.0, 0.0);
+			}
+	  }
 
     /* USER CODE END WHILE */
 
@@ -298,14 +365,13 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 16;
-  RCC_OscInitStruct.PLL.PLLN = 336;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 50;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 2;
   RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -322,10 +388,47 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief CAN1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CAN1_Init(void)
+{
+
+  /* USER CODE BEGIN CAN1_Init 0 */
+
+  /* USER CODE END CAN1_Init 0 */
+
+  /* USER CODE BEGIN CAN1_Init 1 */
+
+  /* USER CODE END CAN1_Init 1 */
+  hcan1.Instance = CAN1;
+  hcan1.Init.Prescaler = 5;
+  hcan1.Init.Mode = CAN_MODE_NORMAL;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_8TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.TimeTriggeredMode = DISABLE;
+  hcan1.Init.AutoBusOff = ENABLE;
+  hcan1.Init.AutoWakeUp = DISABLE;
+  hcan1.Init.AutoRetransmission = ENABLE;
+  hcan1.Init.ReceiveFifoLocked = DISABLE;
+  hcan1.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN1_Init 2 */
+
+  /* USER CODE END CAN1_Init 2 */
+
 }
 
 /**
@@ -363,35 +466,129 @@ static void MX_I2C3_Init(void)
 }
 
 /**
-  * @brief USART2 Initialization Function
+  * @brief TIM6 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_USART2_UART_Init(void)
+static void MX_TIM6_Init(void)
 {
 
-  /* USER CODE BEGIN USART2_Init 0 */
+  /* USER CODE BEGIN TIM6_Init 0 */
 
-  /* USER CODE END USART2_Init 0 */
+  /* USER CODE END TIM6_Init 0 */
 
-  /* USER CODE BEGIN USART2_Init 1 */
+  LL_TIM_InitTypeDef TIM_InitStruct = {0};
 
-  /* USER CODE END USART2_Init 1 */
-  huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
-  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
-  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart2) != HAL_OK)
+  /* Peripheral clock enable */
+  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
+
+  /* TIM6 interrupt Init */
+  NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_EnableIRQ(TIM6_DAC_IRQn);
+
+  /* USER CODE BEGIN TIM6_Init 1 */
+
+  /* USER CODE END TIM6_Init 1 */
+  TIM_InitStruct.Prescaler = 49;
+  TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
+  TIM_InitStruct.Autoreload = 4999;
+  LL_TIM_Init(TIM6, &TIM_InitStruct);
+  LL_TIM_EnableARRPreload(TIM6);
+  LL_TIM_SetTriggerOutput(TIM6, LL_TIM_TRGO_RESET);
+  LL_TIM_DisableMasterSlaveMode(TIM6);
+  /* USER CODE BEGIN TIM6_Init 2 */
+
+  /* USER CODE END TIM6_Init 2 */
+
+}
+
+/**
+  * @brief TIM9 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM9_Init(void)
+{
+
+  /* USER CODE BEGIN TIM9_Init 0 */
+
+  /* USER CODE END TIM9_Init 0 */
+
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM9_Init 1 */
+
+  /* USER CODE END TIM9_Init 1 */
+  htim9.Instance = TIM9;
+  htim9.Init.Prescaler = 7000-1;
+  htim9.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim9.Init.Period = 10000-1;
+  htim9.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim9.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_PWM_Init(&htim9) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN USART2_Init 2 */
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 5000-1;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim9, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM9_Init 2 */
 
-  /* USER CODE END USART2_Init 2 */
+  /* USER CODE END TIM9_Init 2 */
+  HAL_TIM_MspPostInit(&htim9);
+
+}
+
+/**
+  * @brief TIM10 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM10_Init(void)
+{
+
+  /* USER CODE BEGIN TIM10_Init 0 */
+
+  /* USER CODE END TIM10_Init 0 */
+
+  LL_TIM_InitTypeDef TIM_InitStruct = {0};
+
+  /* Peripheral clock enable */
+  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM10);
+
+  /* USER CODE BEGIN TIM10_Init 1 */
+
+  /* USER CODE END TIM10_Init 1 */
+  TIM_InitStruct.Prescaler = 4999;
+  TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
+  TIM_InitStruct.Autoreload = 65535;
+  TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
+  LL_TIM_Init(TIM10, &TIM_InitStruct);
+  LL_TIM_EnableARRPreload(TIM10);
+  /* USER CODE BEGIN TIM10_Init 2 */
+
+  /* USER CODE END TIM10_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
 
 }
 
@@ -422,14 +619,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PB8 PB9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -466,55 +655,21 @@ int _write(int file, char *ptr, int len) {
 	    return len;
 }
 
+ */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
 	pumpEvents(can_intf);
 }
- */
 
-/*
- *
-void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
-{
-    if(hi2c->Instance == I2C1) {
-    	acc_x_raw = (int16_t)((data_acc[0] << 8) + data_acc[1]);
-		acc_y_raw = (int16_t)((data_acc[2] << 8) + data_acc[3]);
-		acc_z_raw = (int16_t)((data_acc[4] << 8) + data_acc[5]);
-		acc_x = ((float)acc_x_raw /ACC_SCALE);
-		acc_y = ((float)acc_y_raw /ACC_SCALE);
-		acc_z = ((float)acc_z_raw /ACC_SCALE);
-		rad_XZ = atan2f(acc_x, acc_z);
-		//rad_XZ = atan2f(-acc_x, sqrt(acc_y*acc_y + acc_z*acc_z));
-		deg_XZ = (rad_XZ*RAD2DEG);
-
-        dma_done = 1;
-
-        //TODO: zkusit jesli pribiha callback pomoci printf
-    }
-}
- */
-
-		/*
 void imu_callback()
 {
-	if(HAL_I2C_GetState(&hi2c1) == HAL_I2C_STATE_READY) {
+
+	if(HAL_I2C_GetState(&hi2c3) == HAL_I2C_STATE_READY) {
 		Read_data();
-		 *
-		if (dma_done) {
-			dma_done = 0;
-			uint16_t current_tick = LL_TIM_GetCounter(TIM10);
-
-			uint16_t dt_tick = current_tick - previous_tick;
-			float dt_float = (float)dt_tick*0.0001;
-			previous_tick = current_tick;
-
-			CF_Update(&filter, gyro_y, deg_XZ, dt_float);
-			//printf("dt: %.4f \r\n", filter.angle);
-			send_pos = 1;
-		}
 	}
+
 }
-		 */
+
 
 
 }

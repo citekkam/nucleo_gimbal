@@ -3,6 +3,8 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="true"/>
 	<list key="searchhistory">
+		<item value="I2C1"/>
+		<item value="i2c1"/>
 		<item value="hi2c1"/>
 		<item value="printf"/>
 		<item value="error_position"/>
@@ -16,8 +18,6 @@
 		<item value="target_pos"/>
 		<item value="first_pos"/>
 		<item value="acc_cnt"/>
-		<item value="feedback_counter"/>
-		<item value="DMA"/>
 	</list>
 	<list key="replacehistory">
 		<item value="hi2c3"/>

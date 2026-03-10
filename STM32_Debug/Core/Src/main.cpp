@@ -28,6 +28,7 @@
 #include "ODrive/ODriveCAN.h"
 #include "ODrive_CubeIDE_glue.h"
 #include "llcp.h"
+//#include "usbd_cdc_if.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -74,6 +75,7 @@ uint8_t static position_enable = 1;
 static uint32_t start_time_ms = 0;
 uint8_t running = 0;
 uint32_t value = 0;
+uint8_t send_data = 0;
 
 //--------------------------ODrive----------------------------------
 CubeCANInterface can_intf = {&hcan1};
@@ -92,6 +94,7 @@ static void MX_CAN1_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_TIM10_Init(void);
 static void MX_TIM6_Init(void);
+static void MX_TIM7_Init(void);
 /* USER CODE BEGIN PFP */
 
 void onHeartbeat(Heartbeat_msg_t& msg, void* user_data) {
@@ -159,6 +162,7 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM10_Init();
   MX_TIM6_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
   ICM20602_Init();
   CF_Init(&filter, 0.0);
@@ -288,6 +292,10 @@ int main(void)
 	LL_TIM_EnableIT_UPDATE(TIM6);
 	LL_TIM_EnableCounter(TIM6);
 
+	LL_TIM_SetCounter(TIM7, 0);
+	LL_TIM_EnableIT_UPDATE(TIM7);
+	LL_TIM_EnableCounter(TIM7);
+
 
   /* USER CODE END 2 */
 
@@ -329,7 +337,7 @@ int main(void)
 
 				  //printf("ODrive Running \r\n");
 
-				  odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
+				  //odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
 				  HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_SET);
 				  position_enable = 0;
 				  running = 1;
@@ -370,6 +378,11 @@ int main(void)
 				  send_ACK(recieved_msg.id);
 				  odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
 				  position_enable = 0;
+
+				  break;
+
+			  case START_INFO_ID:
+				  send_data = 1;
 
 				  break;
 			  default:
@@ -426,6 +439,7 @@ int main(void)
 	  }
 
 
+	  /*
 	  if (send_pos && position_enable && running) {
 		  	  send_pos = 0;
 		  	  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
@@ -434,8 +448,17 @@ int main(void)
             	  odrv0.setPosition(motor_position, 0.0, 0.0);
               }
 	  }
-	  /*
+
+	  if (send_data) {
+	  	  send_ACK(recieved_msg.id);
+
+	  	  // udelat si posilaci zpravu
+	  }
 	   */
+
+	  //static uint8_t msg[] = "Hello from STM32\r\n";
+	  //CDC_Transmit_FS(msg, sizeof(msg));
+
 
     /* USER CODE END WHILE */
 
@@ -469,7 +492,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLM = 16;
   RCC_OscInitStruct.PLL.PLLN = 336;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
-  RCC_OscInitStruct.PLL.PLLQ = 2;
+  RCC_OscInitStruct.PLL.PLLQ = 7;
   RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -596,6 +619,43 @@ static void MX_TIM6_Init(void)
   /* USER CODE BEGIN TIM6_Init 2 */
 
   /* USER CODE END TIM6_Init 2 */
+
+}
+
+/**
+  * @brief TIM7 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM7_Init(void)
+{
+
+  /* USER CODE BEGIN TIM7_Init 0 */
+
+  /* USER CODE END TIM7_Init 0 */
+
+  LL_TIM_InitTypeDef TIM_InitStruct = {0};
+
+  /* Peripheral clock enable */
+  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM7);
+
+  /* TIM7 interrupt Init */
+  NVIC_SetPriority(TIM7_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_EnableIRQ(TIM7_IRQn);
+
+  /* USER CODE BEGIN TIM7_Init 1 */
+
+  /* USER CODE END TIM7_Init 1 */
+  TIM_InitStruct.Prescaler = 839;
+  TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
+  TIM_InitStruct.Autoreload = 1000-LL_TIM_IC_FILTER_FDIV1_N2;
+  LL_TIM_Init(TIM7, &TIM_InitStruct);
+  LL_TIM_EnableARRPreload(TIM7);
+  LL_TIM_SetTriggerOutput(TIM7, LL_TIM_TRGO_RESET);
+  LL_TIM_DisableMasterSlaveMode(TIM7);
+  /* USER CODE BEGIN TIM7_Init 2 */
+
+  /* USER CODE END TIM7_Init 2 */
 
 }
 
@@ -821,6 +881,13 @@ void imu_callback()
 			send_pos = 1;
 		}
 		 */
+	}
+}
+
+void feedback_callback()
+{
+	if (send_data) {
+	  	send_ACK(57);
 	}
 }
 

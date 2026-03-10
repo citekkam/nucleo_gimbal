@@ -173,12 +173,17 @@ void Read_Data_ACC()
 
 void Read_data()
 {
+
 	HAL_I2C_Mem_Read_DMA(&hi2c3, (ICM20602_ADDRESS<<1), REG_DATA_ACC, 1, data, 14);
+
 }
 
 void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
+
 {
-    if(hi2c->Instance == I2C1) {
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+    if(hi2c->Instance == I2C3) {
     	static int16_t acc_x_raw, acc_y_raw, acc_z_raw;
 		static float acc_x, acc_y, acc_z, rad_XZ;
 
@@ -203,7 +208,7 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 
 void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 {
-    if (hi2c->Instance == I2C1)
+    if (hi2c->Instance == I2C3)
     {
         if (hi2c->hdmarx != NULL)
 		   HAL_DMA_Abort(hi2c->hdmarx);

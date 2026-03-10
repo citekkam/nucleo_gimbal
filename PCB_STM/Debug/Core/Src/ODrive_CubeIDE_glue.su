@@ -1,0 +1,2 @@
+../Core/Src/ODrive_CubeIDE_glue.cpp:10:6:bool sendMsg(CubeCANInterface&, uint32_t, uint8_t, const uint8_t*)	56	static
+../Core/Src/ODrive_CubeIDE_glue.cpp:34:6:void pumpEvents(CubeCANInterface&)	56	static

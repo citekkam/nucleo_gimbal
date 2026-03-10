@@ -129,6 +129,11 @@ bool receive_message()
 			  got_valid_msg = true;
 			  break;
 			}
+            case START_INFO_ID: {
+			  memcpy(&recieved_msg, llcp_message_ptr->payload, sizeof(recieve_msg));
+			  got_valid_msg = true;
+			  break;
+			}
 
 
             default: break;
@@ -136,7 +141,7 @@ bool receive_message()
           // Pokud jsme zpracovali celou zprávu, můžeme vrátit true okamžitě,
           // nebo nechat smyčku doběhnout, pokud chceme zpracovat i další bajty v bufferu.
           // Zde vracíme true, aby hlavní smyčka mohla reagovat hned.
-          return true;
+          //return true;
         }
       }
   }

@@ -1,3 +1,5 @@
 gyro_y
 filter.angle
 message_received
+value
+deg_XZ

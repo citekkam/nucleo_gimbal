@@ -14,6 +14,7 @@ extern "C" {
 #define REFERENCE_ANGLE_ID 53 // payload bude obsahovat hodonu uhlu ktery ma gimbal sledovat
 #define START 56
 #define STOP 55
+#define START_INFO_ID 57
 
 typedef struct __attribute__((__packed__))
 {
