@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<item key="hasShownOverlayPopupBefore" value="true"/>
-	<item key="replaceBarOpen" value="true"/>
+	<item key="replaceBarOpen" value="false"/>
 	<list key="searchhistory">
+		<item value="HAL_PCD_DevConnect"/>
 		<item value="I2C1"/>
 		<item value="i2c1"/>
 		<item value="hi2c1"/>
@@ -17,7 +18,6 @@
 		<item value="exponent"/>
 		<item value="target_pos"/>
 		<item value="first_pos"/>
-		<item value="acc_cnt"/>
 	</list>
 	<list key="replacehistory">
 		<item value="hi2c3"/>
