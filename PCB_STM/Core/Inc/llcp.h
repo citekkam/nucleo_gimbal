@@ -15,6 +15,7 @@ extern "C" {
 #define START 56
 #define STOP 55
 #define START_INFO_ID 57
+#define STOP_INFO_ID 58
 
 typedef struct __attribute__((__packed__))
 {
