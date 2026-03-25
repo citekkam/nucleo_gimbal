@@ -1,10 +1,10 @@
-22:17:17 **** Incremental Build of configuration Debug for project PCB_STM ****
+12:14:35 **** Incremental Build of configuration Debug for project PCB_STM ****
 make -j12 all 
 arm-none-eabi-size  PCB_STM.elf 
    text	   data	    bss	    dec	    hex	filename
-  64980	    376	  10136	  75492	  126e4	PCB_STM.elf
+  71740	    376	  10208	  82324	  14194	PCB_STM.elf
 Finished building: default.size.stdout
  
 
-22:17:17 Build Finished. 0 errors, 0 warnings. (took 132ms)
+12:14:35 Build Finished. 0 errors, 0 warnings. (took 142ms)
 

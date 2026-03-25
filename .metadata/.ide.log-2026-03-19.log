@@ -1,0 +1,608 @@
+2026-03-20 00:01:26,382 [INFO] WebApp:194 - Connection lost
+2026-03-20 00:01:32,520 [INFO] WebApp:191 - Connection restablished
+2026-03-20 00:01:34,558 [INFO] WebApp:194 - Connection lost
+2026-03-20 00:01:34,721 [INFO] WebApp:191 - Connection restablished
+2026-03-20 00:01:55,144 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 862898752 Bytes (1042284544)
+2026-03-20 00:01:56,875 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 919521856 Bytes (1042284544)
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM6_7
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM6_7
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: CAN
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USB_DEVICE
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: SYS
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: RCC
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: I2C
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USB_OTG_FS
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: NVIC
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USART
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM1_8
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: DMA
+2026-03-20 00:01:57,072 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: GPIO
+2026-03-20 00:01:57,072 [INFO] CodeGenerator:892 - code generatio: config db path: /opt/st/stm32cubeide_1.19.0/plugins/com.st.stm32cube.common.mx_6.15.0.202507011659//db/
+2026-03-20 00:01:57,074 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:01:57,074 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : hdmavalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:327 - 	 sub Args: 
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : Instancevalue: DMA1_Stream2
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : Instancevalue: DMA1_Stream2
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : Initvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:327 - 	 sub Args: 
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : Channelvalue: DMA_CHANNEL_3
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : Channelvalue: DMA_CHANNEL_3
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : Directionvalue: DMA_PERIPH_TO_MEMORY
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : Directionvalue: DMA_PERIPH_TO_MEMORY
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : PeriphIncvalue: DMA_PINC_DISABLE
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : PeriphIncvalue: DMA_PINC_DISABLE
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : MemIncvalue: DMA_MINC_ENABLE
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : MemIncvalue: DMA_MINC_ENABLE
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : PeriphDataAlignmentvalue: DMA_PDATAALIGN_BYTE
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : PeriphDataAlignmentvalue: DMA_PDATAALIGN_BYTE
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : MemDataAlignmentvalue: DMA_MDATAALIGN_BYTE
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : MemDataAlignmentvalue: DMA_MDATAALIGN_BYTE
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : Modevalue: DMA_NORMAL
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : Modevalue: DMA_NORMAL
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : Priorityvalue: DMA_PRIORITY_HIGH
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : Priorityvalue: DMA_PRIORITY_HIGH
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : FIFOModevalue: DMA_FIFOMODE_DISABLE
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : FIFOModevalue: DMA_FIFOMODE_DISABLE
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : FIFOThresholdvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : FIFOThresholdvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : MemBurstvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : MemBurstvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : PeriphBurstvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : PeriphBurstvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : Lockvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : Lockvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : Statevalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : Statevalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : Parentvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : Parentvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : XferCpltCallbackvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : XferCpltCallbackvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : XferHalfCpltCallbackvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : XferHalfCpltCallbackvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : XferM1CpltCallbackvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : XferM1CpltCallbackvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : XferErrorCallbackvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : XferErrorCallbackvalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:325 - Argument : ErrorCodevalue: null
+2026-03-20 00:01:57,075 [INFO] Argument:335 - Argument : ErrorCodevalue: null
+2026-03-20 00:01:57,089 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:01:57,089 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:01:57,089 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:01:57,145 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/license.tmp_save
+2026-03-20 00:01:57,364 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/license.tmp
+2026-03-20 00:01:57,392 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/gpio.tmp_save
+2026-03-20 00:01:57,529 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/gpio.tmp
+2026-03-20 00:01:57,551 [WARN] IPConfigManager:3238 - Warning: the RefConfig PWREx_EnableUSBVoltageDetector is not available in your config.xml file
+2026-03-20 00:01:57,554 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_vars.tmp_save
+2026-03-20 00:01:57,641 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_vars.tmp
+2026-03-20 00:01:57,643 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_inc.tmp_save
+2026-03-20 00:01:57,715 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_inc.tmp
+2026-03-20 00:01:57,717 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_HalInit.tmp_save
+2026-03-20 00:01:57,808 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_HalInit.tmp
+2026-03-20 00:01:57,809 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_Msp.tmp_save
+2026-03-20 00:01:57,884 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_Msp.tmp
+2026-03-20 00:01:57,983 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2026-03-20 00:01:57,988 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma.tmp_save
+2026-03-20 00:01:58,044 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma.tmp
+2026-03-20 00:01:58,045 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma_GV.tmp_save
+2026-03-20 00:01:58,101 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma_GV.tmp
+2026-03-20 00:01:58,125 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2026-03-20 00:01:58,128 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.c_save
+2026-03-20 00:01:58,189 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.c
+2026-03-20 00:01:58,190 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.h_save
+2026-03-20 00:01:58,231 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.h
+2026-03-20 00:01:58,232 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.h_save
+2026-03-20 00:01:58,270 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.h
+2026-03-20 00:01:58,271 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.c_save
+2026-03-20 00:01:58,314 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.c
+2026-03-20 00:01:58,315 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.h_save
+2026-03-20 00:01:58,354 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.h
+2026-03-20 00:01:58,355 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.c_save
+2026-03-20 00:01:58,396 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.c
+2026-03-20 00:01:58,397 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.h_save
+2026-03-20 00:01:58,434 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.h
+2026-03-20 00:01:58,435 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.c_save
+2026-03-20 00:01:58,480 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.c
+2026-03-20 00:01:58,486 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_it.c_save
+2026-03-20 00:01:58,623 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_it.c
+2026-03-20 00:01:58,625 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_it.h_save
+2026-03-20 00:01:58,665 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_it.h
+2026-03-20 00:01:58,671 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_hal_msp.c_save
+2026-03-20 00:01:58,737 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_hal_msp.c
+2026-03-20 00:01:58,738 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/system.tmp_save
+2026-03-20 00:01:58,774 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/system.tmp
+2026-03-20 00:01:58,776 [INFO] CodeEngine:321 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_hal_conf.h_save
+2026-03-20 00:01:58,819 [INFO] CodeEngine:345 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_hal_conf.h
+2026-03-20 00:01:58,828 [WARN] IPConfigManager:3238 - Warning: the RefConfig PLL2P_FOR_MCO is not available in your config.xml file
+2026-03-20 00:01:58,831 [INFO] ApiDbMcu:532 - Load IP Config File for CAN1
+2026-03-20 00:01:58,832 [INFO] ApiDbMcu:532 - Load IP Config File for I2C3
+2026-03-20 00:01:58,837 [INFO] ApiDbMcu:532 - Load IP Config File for TIM6
+2026-03-20 00:01:58,842 [INFO] ApiDbMcu:532 - Load IP Config File for TIM7
+2026-03-20 00:01:58,847 [INFO] ApiDbMcu:532 - Load IP Config File for TIM10
+2026-03-20 00:01:58,849 [INFO] ApiDbMcu:532 - Load IP Config File for USART2
+2026-03-20 00:01:58,851 [INFO] ApiDbMcu:532 - Load IP Config File for RCC
+2026-03-20 00:01:58,852 [WARN] IPConfigManager:3811 - IP not found : TIM
+2026-03-20 00:01:58,852 [WARN] CodeGenerator:4259 - IP not found : null
+2026-03-20 00:01:58,854 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/main.h_save
+2026-03-20 00:01:58,902 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/main.h
+2026-03-20 00:01:58,903 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/main.c_save
+2026-03-20 00:01:58,959 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/main.c
+2026-03-20 00:01:59,161 [INFO] ProjectBuilder:3606 - Time for Copy HAL[1] : 34mS.
+2026-03-20 00:01:59,163 [INFO] ProjectBuilder:5216 - Project Generator version: 4.7.0-B52
+2026-03-20 00:01:59,218 [INFO] ConfigFileManager:1595 - The Die is : DIE421
+2026-03-20 00:01:59,219 [INFO] ApiDbMcu:532 - Load IP Config File for FATFS
+2026-03-20 00:01:59,222 [INFO] ApiDbMcu:532 - Load IP Config File for FREERTOS
+2026-03-20 00:01:59,223 [INFO] ApiDbMcu:532 - Load IP Config File for LIBJPEG
+2026-03-20 00:01:59,226 [INFO] ApiDbMcu:532 - Load IP Config File for MBEDTLS
+2026-03-20 00:01:59,227 [INFO] ApiDbMcu:532 - Load IP Config File for USB_HOST
+2026-03-20 00:01:59,719 [INFO] ProjectBuilder:5496 - Time for Generating toolchain IDE Files: 556mS.
+2026-03-20 00:01:59,719 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 0mS.
+2026-03-20 00:01:59,721 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 0mS.
+2026-03-20 00:02:37,041 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 680332640 Bytes (1042284544)
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM6_7
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM6_7
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: CAN
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USB_DEVICE
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: SYS
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: RCC
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: I2C
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USB_OTG_FS
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: NVIC
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USART
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM1_8
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: DMA
+2026-03-20 00:02:37,136 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: GPIO
+2026-03-20 00:02:37,137 [INFO] CodeGenerator:892 - code generatio: config db path: /opt/st/stm32cubeide_1.19.0/plugins/com.st.stm32cube.common.mx_6.15.0.202507011659//db/
+2026-03-20 00:02:37,140 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:02:37,140 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:02:37,141 [INFO] Argument:325 - Argument : hdmavalue: null
+2026-03-20 00:02:37,141 [INFO] Argument:327 - 	 sub Args: 
+2026-03-20 00:02:37,141 [INFO] Argument:325 - Argument : Instancevalue: DMA1_Stream2
+2026-03-20 00:02:37,141 [INFO] Argument:335 - Argument : Instancevalue: DMA1_Stream2
+2026-03-20 00:02:37,141 [INFO] Argument:325 - Argument : Initvalue: null
+2026-03-20 00:02:37,141 [INFO] Argument:327 - 	 sub Args: 
+2026-03-20 00:02:37,141 [INFO] Argument:325 - Argument : Channelvalue: DMA_CHANNEL_3
+2026-03-20 00:02:37,141 [INFO] Argument:335 - Argument : Channelvalue: DMA_CHANNEL_3
+2026-03-20 00:02:37,141 [INFO] Argument:325 - Argument : Directionvalue: DMA_PERIPH_TO_MEMORY
+2026-03-20 00:02:37,141 [INFO] Argument:335 - Argument : Directionvalue: DMA_PERIPH_TO_MEMORY
+2026-03-20 00:02:37,141 [INFO] Argument:325 - Argument : PeriphIncvalue: DMA_PINC_DISABLE
+2026-03-20 00:02:37,141 [INFO] Argument:335 - Argument : PeriphIncvalue: DMA_PINC_DISABLE
+2026-03-20 00:02:37,141 [INFO] Argument:325 - Argument : MemIncvalue: DMA_MINC_ENABLE
+2026-03-20 00:02:37,141 [INFO] Argument:335 - Argument : MemIncvalue: DMA_MINC_ENABLE
+2026-03-20 00:02:37,141 [INFO] Argument:325 - Argument : PeriphDataAlignmentvalue: DMA_PDATAALIGN_BYTE
+2026-03-20 00:02:37,141 [INFO] Argument:335 - Argument : PeriphDataAlignmentvalue: DMA_PDATAALIGN_BYTE
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : MemDataAlignmentvalue: DMA_MDATAALIGN_BYTE
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : MemDataAlignmentvalue: DMA_MDATAALIGN_BYTE
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : Modevalue: DMA_NORMAL
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : Modevalue: DMA_NORMAL
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : Priorityvalue: DMA_PRIORITY_HIGH
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : Priorityvalue: DMA_PRIORITY_HIGH
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : FIFOModevalue: DMA_FIFOMODE_DISABLE
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : FIFOModevalue: DMA_FIFOMODE_DISABLE
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : FIFOThresholdvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : FIFOThresholdvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : MemBurstvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : MemBurstvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : PeriphBurstvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : PeriphBurstvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : Lockvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : Lockvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : Statevalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : Statevalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : Parentvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : Parentvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : XferCpltCallbackvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : XferCpltCallbackvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : XferHalfCpltCallbackvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : XferHalfCpltCallbackvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : XferM1CpltCallbackvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : XferM1CpltCallbackvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : XferErrorCallbackvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : XferErrorCallbackvalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:325 - Argument : ErrorCodevalue: null
+2026-03-20 00:02:37,142 [INFO] Argument:335 - Argument : ErrorCodevalue: null
+2026-03-20 00:02:37,164 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:02:37,164 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:02:37,164 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:02:37,265 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/license.tmp_save
+2026-03-20 00:02:37,308 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/license.tmp
+2026-03-20 00:02:37,317 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/gpio.tmp_save
+2026-03-20 00:02:37,354 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/gpio.tmp
+2026-03-20 00:02:37,368 [WARN] IPConfigManager:3238 - Warning: the RefConfig PWREx_EnableUSBVoltageDetector is not available in your config.xml file
+2026-03-20 00:02:37,370 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_vars.tmp_save
+2026-03-20 00:02:37,404 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_vars.tmp
+2026-03-20 00:02:37,405 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_inc.tmp_save
+2026-03-20 00:02:37,437 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_inc.tmp
+2026-03-20 00:02:37,438 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_HalInit.tmp_save
+2026-03-20 00:02:37,475 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_HalInit.tmp
+2026-03-20 00:02:37,476 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_Msp.tmp_save
+2026-03-20 00:02:37,520 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_Msp.tmp
+2026-03-20 00:02:37,607 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2026-03-20 00:02:37,611 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma.tmp_save
+2026-03-20 00:02:37,645 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma.tmp
+2026-03-20 00:02:37,646 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma_GV.tmp_save
+2026-03-20 00:02:37,678 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma_GV.tmp
+2026-03-20 00:02:37,689 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2026-03-20 00:02:37,690 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.c_save
+2026-03-20 00:02:37,727 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.c
+2026-03-20 00:02:37,728 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.h_save
+2026-03-20 00:02:37,761 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.h
+2026-03-20 00:02:37,762 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.h_save
+2026-03-20 00:02:37,795 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.h
+2026-03-20 00:02:37,796 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.c_save
+2026-03-20 00:02:37,834 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.c
+2026-03-20 00:02:37,835 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.h_save
+2026-03-20 00:02:37,868 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.h
+2026-03-20 00:02:37,869 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.c_save
+2026-03-20 00:02:37,907 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.c
+2026-03-20 00:02:37,908 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.h_save
+2026-03-20 00:02:37,942 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.h
+2026-03-20 00:02:37,943 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.c_save
+2026-03-20 00:02:37,982 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.c
+2026-03-20 00:02:37,987 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_it.c_save
+2026-03-20 00:02:38,033 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_it.c
+2026-03-20 00:02:38,034 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_it.h_save
+2026-03-20 00:02:38,069 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_it.h
+2026-03-20 00:02:38,075 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_hal_msp.c_save
+2026-03-20 00:02:38,131 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_hal_msp.c
+2026-03-20 00:02:38,132 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/system.tmp_save
+2026-03-20 00:02:38,168 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/system.tmp
+2026-03-20 00:02:38,171 [INFO] CodeEngine:321 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_hal_conf.h_save
+2026-03-20 00:02:38,210 [INFO] CodeEngine:345 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_hal_conf.h
+2026-03-20 00:02:38,218 [WARN] IPConfigManager:3238 - Warning: the RefConfig PLL2P_FOR_MCO is not available in your config.xml file
+2026-03-20 00:02:38,221 [WARN] IPConfigManager:3811 - IP not found : TIM
+2026-03-20 00:02:38,222 [WARN] CodeGenerator:4259 - IP not found : null
+2026-03-20 00:02:38,223 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/main.h_save
+2026-03-20 00:02:38,260 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/main.h
+2026-03-20 00:02:38,261 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/main.c_save
+2026-03-20 00:02:38,320 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/main.c
+2026-03-20 00:02:38,446 [INFO] ProjectBuilder:3606 - Time for Copy HAL[1] : 21mS.
+2026-03-20 00:02:38,447 [INFO] ProjectBuilder:5216 - Project Generator version: 4.7.0-B52
+2026-03-20 00:02:38,494 [INFO] ConfigFileManager:1595 - The Die is : DIE421
+2026-03-20 00:02:38,845 [INFO] ProjectBuilder:5496 - Time for Generating toolchain IDE Files: 398mS.
+2026-03-20 00:02:38,846 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 1mS.
+2026-03-20 00:02:38,847 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 0mS.
+2026-03-20 00:02:42,509 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 517574840 Bytes (1042284544)
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM6_7
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM6_7
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: CAN
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USB_DEVICE
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: SYS
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: RCC
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: I2C
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USB_OTG_FS
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: NVIC
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USART
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM1_8
+2026-03-20 00:02:42,606 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: DMA
+2026-03-20 00:02:42,607 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: GPIO
+2026-03-20 00:02:42,607 [INFO] CodeGenerator:892 - code generatio: config db path: /opt/st/stm32cubeide_1.19.0/plugins/com.st.stm32cube.common.mx_6.15.0.202507011659//db/
+2026-03-20 00:02:42,609 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:02:42,609 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : hdmavalue: null
+2026-03-20 00:02:42,610 [INFO] Argument:327 - 	 sub Args: 
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : Instancevalue: DMA1_Stream2
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : Instancevalue: DMA1_Stream2
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : Initvalue: null
+2026-03-20 00:02:42,610 [INFO] Argument:327 - 	 sub Args: 
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : Channelvalue: DMA_CHANNEL_3
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : Channelvalue: DMA_CHANNEL_3
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : Directionvalue: DMA_PERIPH_TO_MEMORY
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : Directionvalue: DMA_PERIPH_TO_MEMORY
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : PeriphIncvalue: DMA_PINC_DISABLE
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : PeriphIncvalue: DMA_PINC_DISABLE
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : MemIncvalue: DMA_MINC_ENABLE
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : MemIncvalue: DMA_MINC_ENABLE
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : PeriphDataAlignmentvalue: DMA_PDATAALIGN_BYTE
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : PeriphDataAlignmentvalue: DMA_PDATAALIGN_BYTE
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : MemDataAlignmentvalue: DMA_MDATAALIGN_BYTE
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : MemDataAlignmentvalue: DMA_MDATAALIGN_BYTE
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : Modevalue: DMA_NORMAL
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : Modevalue: DMA_NORMAL
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : Priorityvalue: DMA_PRIORITY_HIGH
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : Priorityvalue: DMA_PRIORITY_HIGH
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : FIFOModevalue: DMA_FIFOMODE_DISABLE
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : FIFOModevalue: DMA_FIFOMODE_DISABLE
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : FIFOThresholdvalue: null
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : FIFOThresholdvalue: null
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : MemBurstvalue: null
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : MemBurstvalue: null
+2026-03-20 00:02:42,610 [INFO] Argument:325 - Argument : PeriphBurstvalue: null
+2026-03-20 00:02:42,610 [INFO] Argument:335 - Argument : PeriphBurstvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:325 - Argument : Lockvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:335 - Argument : Lockvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:325 - Argument : Statevalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:335 - Argument : Statevalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:325 - Argument : Parentvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:335 - Argument : Parentvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:325 - Argument : XferCpltCallbackvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:335 - Argument : XferCpltCallbackvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:325 - Argument : XferHalfCpltCallbackvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:335 - Argument : XferHalfCpltCallbackvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:325 - Argument : XferM1CpltCallbackvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:335 - Argument : XferM1CpltCallbackvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:325 - Argument : XferErrorCallbackvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:335 - Argument : XferErrorCallbackvalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:325 - Argument : ErrorCodevalue: null
+2026-03-20 00:02:42,611 [INFO] Argument:335 - Argument : ErrorCodevalue: null
+2026-03-20 00:02:42,633 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:02:42,633 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:02:42,633 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:02:42,695 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/license.tmp_save
+2026-03-20 00:02:42,743 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/license.tmp
+2026-03-20 00:02:42,752 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/gpio.tmp_save
+2026-03-20 00:02:42,789 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/gpio.tmp
+2026-03-20 00:02:42,799 [WARN] IPConfigManager:3238 - Warning: the RefConfig PWREx_EnableUSBVoltageDetector is not available in your config.xml file
+2026-03-20 00:02:42,801 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_vars.tmp_save
+2026-03-20 00:02:42,834 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_vars.tmp
+2026-03-20 00:02:42,834 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_inc.tmp_save
+2026-03-20 00:02:42,866 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_inc.tmp
+2026-03-20 00:02:42,867 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_HalInit.tmp_save
+2026-03-20 00:02:42,903 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_HalInit.tmp
+2026-03-20 00:02:42,904 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_Msp.tmp_save
+2026-03-20 00:02:42,944 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_Msp.tmp
+2026-03-20 00:02:43,015 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2026-03-20 00:02:43,019 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma.tmp_save
+2026-03-20 00:02:43,053 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma.tmp
+2026-03-20 00:02:43,054 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma_GV.tmp_save
+2026-03-20 00:02:43,086 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma_GV.tmp
+2026-03-20 00:02:43,097 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2026-03-20 00:02:43,098 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.c_save
+2026-03-20 00:02:43,137 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.c
+2026-03-20 00:02:43,138 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.h_save
+2026-03-20 00:02:43,173 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.h
+2026-03-20 00:02:43,174 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.h_save
+2026-03-20 00:02:43,210 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.h
+2026-03-20 00:02:43,211 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.c_save
+2026-03-20 00:02:43,250 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.c
+2026-03-20 00:02:43,251 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.h_save
+2026-03-20 00:02:43,283 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.h
+2026-03-20 00:02:43,284 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.c_save
+2026-03-20 00:02:43,319 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.c
+2026-03-20 00:02:43,320 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.h_save
+2026-03-20 00:02:43,352 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.h
+2026-03-20 00:02:43,353 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.c_save
+2026-03-20 00:02:43,394 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.c
+2026-03-20 00:02:43,402 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_it.c_save
+2026-03-20 00:02:43,463 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_it.c
+2026-03-20 00:02:43,464 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_it.h_save
+2026-03-20 00:02:43,497 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_it.h
+2026-03-20 00:02:43,502 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_hal_msp.c_save
+2026-03-20 00:02:43,550 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_hal_msp.c
+2026-03-20 00:02:43,551 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/system.tmp_save
+2026-03-20 00:02:43,583 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/system.tmp
+2026-03-20 00:02:43,584 [INFO] CodeEngine:321 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_hal_conf.h_save
+2026-03-20 00:02:43,621 [INFO] CodeEngine:345 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_hal_conf.h
+2026-03-20 00:02:43,627 [WARN] IPConfigManager:3238 - Warning: the RefConfig PLL2P_FOR_MCO is not available in your config.xml file
+2026-03-20 00:02:43,630 [WARN] IPConfigManager:3811 - IP not found : TIM
+2026-03-20 00:02:43,630 [WARN] CodeGenerator:4259 - IP not found : null
+2026-03-20 00:02:43,632 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/main.h_save
+2026-03-20 00:02:43,667 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/main.h
+2026-03-20 00:02:43,668 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/main.c_save
+2026-03-20 00:02:43,727 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/main.c
+2026-03-20 00:02:43,854 [INFO] ProjectBuilder:3606 - Time for Copy HAL[1] : 21mS.
+2026-03-20 00:02:43,855 [INFO] ProjectBuilder:5216 - Project Generator version: 4.7.0-B52
+2026-03-20 00:02:43,901 [INFO] ConfigFileManager:1595 - The Die is : DIE421
+2026-03-20 00:02:44,234 [INFO] ProjectBuilder:5496 - Time for Generating toolchain IDE Files: 378mS.
+2026-03-20 00:02:44,234 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 0mS.
+2026-03-20 00:02:44,235 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 0mS.
+2026-03-20 00:21:48,023 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,024 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,024 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,024 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,025 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,025 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,066 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,066 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,066 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,066 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,170 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,170 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,170 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,171 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,171 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,171 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,208 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,208 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,209 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:48,209 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,736 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,736 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,737 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,737 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,737 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,737 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,768 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,768 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,768 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,768 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,841 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,842 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,842 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,842 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,842 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,842 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,863 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,863 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,863 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:21:58,863 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,355 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,355 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,355 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,356 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,356 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,356 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,383 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,384 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,384 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,384 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,446 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,446 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,446 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,446 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,446 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,446 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,467 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,468 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,468 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:03,468 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:05,999 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:05,999 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:05,999 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,000 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,000 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,000 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,029 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,029 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,029 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,029 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,098 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,098 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,098 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,099 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,099 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,099 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,128 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,129 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,129 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:06,129 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:21,638 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 708531616 Bytes (1042284544)
+2026-03-20 00:22:27,078 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:27,078 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:27,078 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:27,078 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:27,078 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:27,078 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:27,120 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:27,120 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:27,121 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:27,121 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:37,619 [INFO] NvicIntPanel:101 - NVIC parent = com.st.microxplorer.plugins.ip.nvic.MultiNvicIntPanel[,0,0,0x0,invalid,layout=javax.swing.BoxLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=9,maximumSize=,minimumSize=,preferredSize=]
+2026-03-20 00:22:45,481 [INFO] NvicIntPanel:101 - NVIC parent = com.st.microxplorer.plugins.ip.nvic.MultiNvicIntPanel[,0,0,0x0,invalid,layout=javax.swing.BoxLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=9,maximumSize=,minimumSize=,preferredSize=]
+2026-03-20 00:22:54,048 [INFO] NvicIntPanel:101 - NVIC parent = com.st.microxplorer.plugins.ip.nvic.MultiNvicIntPanel[,0,0,0x0,invalid,layout=javax.swing.BoxLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=9,maximumSize=,minimumSize=,preferredSize=]
+2026-03-20 00:22:57,959 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 863079960 Bytes (1042284544)
+2026-03-20 00:22:59,812 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 372986808 Bytes (1042284544)
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM6_7
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM6_7
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: CAN
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USB_DEVICE
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: SYS
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: RCC
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: I2C
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USB_OTG_FS
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: NVIC
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: USART
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM1_8
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: DMA
+2026-03-20 00:22:59,980 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: GPIO
+2026-03-20 00:22:59,981 [INFO] CodeGenerator:892 - code generatio: config db path: /opt/st/stm32cubeide_1.19.0/plugins/com.st.stm32cube.common.mx_6.15.0.202507011659//db/
+2026-03-20 00:22:59,984 [WARN] IP:2250 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:59,984 [WARN] IP:2250 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : hdmavalue: null
+2026-03-20 00:22:59,985 [INFO] Argument:327 - 	 sub Args: 
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : Instancevalue: DMA1_Stream2
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : Instancevalue: DMA1_Stream2
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : Initvalue: null
+2026-03-20 00:22:59,985 [INFO] Argument:327 - 	 sub Args: 
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : Channelvalue: DMA_CHANNEL_3
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : Channelvalue: DMA_CHANNEL_3
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : Directionvalue: DMA_PERIPH_TO_MEMORY
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : Directionvalue: DMA_PERIPH_TO_MEMORY
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : PeriphIncvalue: DMA_PINC_DISABLE
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : PeriphIncvalue: DMA_PINC_DISABLE
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : MemIncvalue: DMA_MINC_ENABLE
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : MemIncvalue: DMA_MINC_ENABLE
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : PeriphDataAlignmentvalue: DMA_PDATAALIGN_BYTE
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : PeriphDataAlignmentvalue: DMA_PDATAALIGN_BYTE
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : MemDataAlignmentvalue: DMA_MDATAALIGN_BYTE
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : MemDataAlignmentvalue: DMA_MDATAALIGN_BYTE
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : Modevalue: DMA_NORMAL
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : Modevalue: DMA_NORMAL
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : Priorityvalue: DMA_PRIORITY_HIGH
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : Priorityvalue: DMA_PRIORITY_HIGH
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : FIFOModevalue: DMA_FIFOMODE_DISABLE
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : FIFOModevalue: DMA_FIFOMODE_DISABLE
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : FIFOThresholdvalue: null
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : FIFOThresholdvalue: null
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : MemBurstvalue: null
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : MemBurstvalue: null
+2026-03-20 00:22:59,985 [INFO] Argument:325 - Argument : PeriphBurstvalue: null
+2026-03-20 00:22:59,985 [INFO] Argument:335 - Argument : PeriphBurstvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:325 - Argument : Lockvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:335 - Argument : Lockvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:325 - Argument : Statevalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:335 - Argument : Statevalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:325 - Argument : Parentvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:335 - Argument : Parentvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:325 - Argument : XferCpltCallbackvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:335 - Argument : XferCpltCallbackvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:325 - Argument : XferHalfCpltCallbackvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:335 - Argument : XferHalfCpltCallbackvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:325 - Argument : XferM1CpltCallbackvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:335 - Argument : XferM1CpltCallbackvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:325 - Argument : XferErrorCallbackvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:335 - Argument : XferErrorCallbackvalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:325 - Argument : ErrorCodevalue: null
+2026-03-20 00:22:59,986 [INFO] Argument:335 - Argument : ErrorCodevalue: null
+2026-03-20 00:23:00,007 [WARN] IP:2250 - DEVICE_SERIAL0_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:23:00,007 [WARN] IP:2250 - DEVICE_SERIAL1_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:23:00,007 [WARN] IP:2250 - DEVICE_SERIAL2_CDC_FS not found: check if there is a RefParameter without a condition.
+2026-03-20 00:23:00,066 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/license.tmp_save
+2026-03-20 00:23:00,291 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/license.tmp
+2026-03-20 00:23:00,314 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/gpio.tmp_save
+2026-03-20 00:23:00,421 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/gpio.tmp
+2026-03-20 00:23:00,460 [WARN] IPConfigManager:3238 - Warning: the RefConfig PWREx_EnableUSBVoltageDetector is not available in your config.xml file
+2026-03-20 00:23:00,463 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_vars.tmp_save
+2026-03-20 00:23:00,552 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_vars.tmp
+2026-03-20 00:23:00,554 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_inc.tmp_save
+2026-03-20 00:23:00,624 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_inc.tmp
+2026-03-20 00:23:00,625 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_HalInit.tmp_save
+2026-03-20 00:23:00,687 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_HalInit.tmp
+2026-03-20 00:23:00,688 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_Msp.tmp_save
+2026-03-20 00:23:00,778 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/usb_otg_fs_Msp.tmp
+2026-03-20 00:23:00,911 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2026-03-20 00:23:00,918 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma.tmp_save
+2026-03-20 00:23:00,960 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma.tmp
+2026-03-20 00:23:00,961 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma_GV.tmp_save
+2026-03-20 00:23:00,998 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/dma_GV.tmp
+2026-03-20 00:23:01,013 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2026-03-20 00:23:01,015 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.c_save
+2026-03-20 00:23:01,058 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.c
+2026-03-20 00:23:01,059 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.h_save
+2026-03-20 00:23:01,100 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usb_device.h
+2026-03-20 00:23:01,101 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.h_save
+2026-03-20 00:23:01,141 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.h
+2026-03-20 00:23:01,142 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.c_save
+2026-03-20 00:23:01,184 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/Target/usbd_conf.c
+2026-03-20 00:23:01,185 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.h_save
+2026-03-20 00:23:01,221 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.h
+2026-03-20 00:23:01,222 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.c_save
+2026-03-20 00:23:01,262 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_desc.c
+2026-03-20 00:23:01,263 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.h_save
+2026-03-20 00:23:01,300 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.h
+2026-03-20 00:23:01,301 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.c_save
+2026-03-20 00:23:01,370 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/USB_DEVICE/App/usbd_cdc_if.c
+2026-03-20 00:23:01,377 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_it.c_save
+2026-03-20 00:23:01,480 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_it.c
+2026-03-20 00:23:01,481 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_it.h_save
+2026-03-20 00:23:01,535 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_it.h
+2026-03-20 00:23:01,545 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_hal_msp.c_save
+2026-03-20 00:23:01,630 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/stm32f4xx_hal_msp.c
+2026-03-20 00:23:01,631 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/system.tmp_save
+2026-03-20 00:23:01,684 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/MXTmpFiles/system.tmp
+2026-03-20 00:23:01,687 [INFO] CodeEngine:321 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_hal_conf.h_save
+2026-03-20 00:23:01,740 [INFO] CodeEngine:345 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/stm32f4xx_hal_conf.h
+2026-03-20 00:23:01,751 [WARN] IPConfigManager:3238 - Warning: the RefConfig PLL2P_FOR_MCO is not available in your config.xml file
+2026-03-20 00:23:01,754 [WARN] IPConfigManager:3811 - IP not found : TIM
+2026-03-20 00:23:01,754 [WARN] CodeGenerator:4259 - IP not found : null
+2026-03-20 00:23:01,757 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/main.h_save
+2026-03-20 00:23:01,810 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Inc/main.h
+2026-03-20 00:23:01,811 [INFO] CodeEngine:265 - oldGeneratedFile, /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/main.c_save
+2026-03-20 00:23:01,896 [INFO] CodeEngine:289 - Generated code: /home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/Core/Src/main.c
+2026-03-20 00:23:02,070 [INFO] ProjectBuilder:3606 - Time for Copy HAL[1] : 27mS.
+2026-03-20 00:23:02,071 [INFO] ProjectBuilder:5216 - Project Generator version: 4.7.0-B52
+2026-03-20 00:23:02,122 [INFO] ConfigFileManager:1595 - The Die is : DIE421
+2026-03-20 00:23:02,553 [INFO] ProjectBuilder:5496 - Time for Generating toolchain IDE Files: 482mS.
+2026-03-20 00:23:02,553 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 0mS.
+2026-03-20 00:23:02,555 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 0mS.
