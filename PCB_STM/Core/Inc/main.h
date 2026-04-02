@@ -74,6 +74,7 @@ void feedback_callback();
 /* USER CODE BEGIN Private defines */
 #define ODRV0_NODE_ID 0
 #define TWO_PI (6.283185307179586f)
+extern volatile uint8_t imu_request;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

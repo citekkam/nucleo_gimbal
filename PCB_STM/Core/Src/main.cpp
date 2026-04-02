@@ -71,13 +71,20 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 extern volatile float gyro_y;
 extern volatile float deg_XZ;
+extern volatile float gyro_x;
+extern volatile float gyro_z;
+extern volatile float acc_x;
+extern volatile float acc_y;
+extern volatile float acc_z;
 CompFilter filter;
 recieve_msg recieved_msg;
+Mahony_t myIMU;
 float motor_position = 0;
 float reference_angle = 0;
 volatile uint8_t dma_done = 0;
+volatile uint8_t imu_request = 0;
 static uint8_t send_pos = 0;
-extern uint8_t i2c_need_recovery;
+extern volatile uint8_t i2c_need_recovery;
 uint8_t static position_enable = 1;
 static uint32_t start_time_ms = 0;
 uint8_t running = 0;
@@ -214,7 +221,9 @@ int main(void)
 
   //HAL_PCD_DevConnect(&hpcd_USB_OTG_FS);
   ICM20602_Init();
-  CF_Init(&filter, 0.0);
+  Read_data();
+  //CF_Init(&filter, 0.0);
+  IMU_Init_MF(&myIMU, 1.5f, 0.001f);
 
 
   /*
@@ -381,6 +390,20 @@ int main(void)
 		  }
 	  }
 
+
+	  if (imu_request) {
+	      imu_request = 0;
+
+	      if (HAL_I2C_GetState(&hi2c3) != HAL_I2C_STATE_READY) {
+	          // recover immediately
+	          HAL_I2C_DeInit(&hi2c3);
+	          I2C_Bus_Recover();
+	          HAL_I2C_Init(&hi2c3);
+	      }
+
+	      Read_data();
+	  }
+
 	  if (dma_done) {
 		  dma_done = 0;
 		  static uint16_t previous_tick = 0;
@@ -391,8 +414,9 @@ int main(void)
 		  float dt_float = (float)dt_tick*0.0001;
 		  previous_tick = current_tick;
 
-		  CF_Update(&filter, gyro_y, deg_XZ, dt_float);
-		  //printf("dt: %.4f \r\n", dt_float);
+		  //CF_Update(&filter, gyro_y, deg_XZ, dt_float);
+		  IMU_Update_MF(&myIMU, gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, dt_float);
+
 		  send_pos = 1;
 	  }
 
@@ -405,9 +429,12 @@ int main(void)
 	  }
 
 	  if (send_pos && position_enable && running) {
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 		  send_pos = 0;
 		  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
-		  motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)+(filter.angle/360.0f)); // zkusit omezit ((-reference_angle/360.0f)+(filter.angle/360.0f)), na maximalni prirustek 20 stupnu
+		  //motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)+(filter.angle/360.0f)); // zkusit omezit ((-reference_angle/360.0f)+(filter.angle/360.0f)), na maximalni prirustek 20 stupnu
+		  motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f)); // zkusit omezit ((-reference_angle/360.0f)+(filter.angle/360.0f)), na maximalni prirustek 20 stupnu
 		  if (motor_position >= -0.25 && motor_position <=0.25) {
 		    odrv0.setPosition(motor_position, 0.0, 0.0);
 		  }
@@ -709,10 +736,14 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+
   /*Configure GPIO pin : PC5 */
   GPIO_InitStruct.Pin = GPIO_PIN_5;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
@@ -786,7 +817,7 @@ void imu_callback()
 void feedback_callback()
 {
 	if (send_data) {
-	  	send_ACK(57);
+		send_imu(57, myIMU.roll,0);
 	}
 }
 

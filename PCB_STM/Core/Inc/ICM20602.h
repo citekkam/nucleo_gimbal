@@ -11,6 +11,7 @@ extern "C" {
 #define REG_CONFIG_GYRO 	0x1B
 #define REG_CONFIG_ACC 		0x1C
 #define REG_DATA_GYRO_Y		0x45
+#define REG_DATA_GYRO		0x43
 #define REG_DATA_ACC 		0x3B
 #define REG_DLPF 			0x1A
 #define REG_DLPF_ACC 		0x1D
@@ -27,11 +28,12 @@ extern "C" {
 #define FIFO_OFF		0x00
 #define FIFO			0x00
 
-#define GYRO_SCALE      16.4
-#define ACC_SCALE		2048.0
+#define GYRO_SCALE      16.4f
+#define ACC_SCALE		2048.0f
 
 #define RAD2DEG 		57.295f
-#define alpha 			0.98f
+#define DEG2RAD 		0.01745329251f
+#define alpha 			0.98f//0.98f
 
 #define DIV_CON "CONNECTED\r\n"
 #define DIV_DISCON "CONNECTION ERROR\r\n"
@@ -57,7 +59,23 @@ typedef struct{
 	float gyro_integral_raw;
 }CompFilter;
 
+typedef struct {
+    // Current Orientation (Quaternion)
+    float q[4];
 
+    // Gyro Bias Integrals
+    float integralFB[3];
+
+    // Tuning Parameters
+    float Kp;
+    float Ki;
+
+    // Output Euler Angles (Degrees)
+    float roll, pitch, yaw;
+} Mahony_t;
+
+void IMU_Init_MF(Mahony_t *filter, float kp, float ki);
+void IMU_Update_MF(Mahony_t *filter, float gx, float gy, float gz, float ax, float ay, float az, float dt);
 void Read_Gyro();
 void Calibrate_GYRO();
 void Read_Data_ACC();
