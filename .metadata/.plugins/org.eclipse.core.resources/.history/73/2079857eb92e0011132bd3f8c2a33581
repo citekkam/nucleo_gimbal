@@ -185,6 +185,10 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
+  uint32_t sysclk = HAL_RCC_GetSysClockFreq();
+  uint32_t hclk = HAL_RCC_GetHCLKFreq();
+  uint32_t pclk1 = HAL_RCC_GetPCLK1Freq();
+  uint32_t pclk2 = HAL_RCC_GetPCLK2Freq();
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -321,8 +325,7 @@ int main(void)
 	  if (message_received) {
 		  switch(recieved_msg.id) {
 			  case START: // zapnout
-				  //send_ACK(recieved_msg.id); //poslat jeste aktualni hodnotu myIMU.pitch
-				  send_imu(recieved_msg.id, myIMU.pitch, 0);
+				  send_ACK(recieved_msg.id);
 
 				  while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL) {
 
