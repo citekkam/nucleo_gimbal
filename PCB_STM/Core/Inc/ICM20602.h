@@ -71,7 +71,9 @@ typedef struct {
     float Ki;
 
     // Output Euler Angles (Degrees)
-    float roll, pitch, yaw;
+    volatile float roll;
+    volatile float pitch;
+    volatile float yaw;
 } Mahony_t;
 
 void IMU_Init_MF(Mahony_t *filter, float kp, float ki);
@@ -85,6 +87,7 @@ void ICM20602_Init();
 void I2C_Bus_Recover();
 void Print2Console(const char* msg1, const char* msg2, int ret);
 void Read_data();
+void I2C_WatchdogCheck();
 
 
 #ifdef __cplusplus

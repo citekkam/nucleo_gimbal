@@ -5,5 +5,3 @@ value
 deg_XZ
 myIMU.roll
 myIMU.pitch
-dma_done
-motor_position

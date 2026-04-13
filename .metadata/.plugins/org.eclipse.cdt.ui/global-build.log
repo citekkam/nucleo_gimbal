@@ -1,59 +1,37 @@
-17:34:37 **** Incremental Build of configuration Debug for project PCB_STM ****
+20:05:18 **** Incremental Build of configuration Debug for project PCB_STM ****
 make -j12 all 
-arm-none-eabi-gcc "../Core/Src/mahony.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -DUSE_FULL_LL_DRIVER -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/mahony.d" -MT"Core/Src/mahony.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/mahony.o"
-arm-none-eabi-g++ -o "PCB_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PCB_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
-Finished building target: PCB_STM.elf
- 
-arm-none-eabi-size  PCB_STM.elf 
-arm-none-eabi-objdump -h -S PCB_STM.elf  > "PCB_STM.list"
-   text	   data	    bss	    dec	    hex	filename
-  74068	    376	  10272	  84716	  14aec	PCB_STM.elf
-Finished building: default.size.stdout
- 
-Finished building: PCB_STM.list
- 
-17:34:41 **** Incremental Build of configuration Debug for project PCB_STM ****
-make -j12 all 
-arm-none-eabi-size  PCB_STM.elf 
-   text	   data	    bss	    dec	    hex	filename
-  74068	    376	  10272	  84716	  14aec	PCB_STM.elf
-Finished building: default.size.stdout
- 
-17:37:14 **** Incremental Build of configuration Debug for project PCB_STM ****
-make -j12 all 
+arm-none-eabi-gcc "../Core/Src/ICM20602.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -DUSE_FULL_LL_DRIVER -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/ICM20602.d" -MT"Core/Src/ICM20602.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/ICM20602.o"
+arm-none-eabi-gcc "../Core/Src/llcp.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -DUSE_FULL_LL_DRIVER -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/llcp.d" -MT"Core/Src/llcp.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/llcp.o"
 arm-none-eabi-g++ "../Core/Src/main.cpp" -mcpu=cortex-m4 -std=gnu++14 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -DUSE_FULL_LL_DRIVER -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-../Core/Src/main.cpp: In function 'int main()':
-../Core/Src/main.cpp:188:12: warning: unused variable 'sysclk' [-Wunused-variable]
-  188 |   uint32_t sysclk = HAL_RCC_GetSysClockFreq();
-      |            ^~~~~~
-../Core/Src/main.cpp:189:12: warning: unused variable 'hclk' [-Wunused-variable]
-  189 |   uint32_t hclk = HAL_RCC_GetHCLKFreq();
-      |            ^~~~
-../Core/Src/main.cpp:190:12: warning: unused variable 'pclk1' [-Wunused-variable]
-  190 |   uint32_t pclk1 = HAL_RCC_GetPCLK1Freq();
-      |            ^~~~~
-../Core/Src/main.cpp:191:12: warning: unused variable 'pclk2' [-Wunused-variable]
-  191 |   uint32_t pclk2 = HAL_RCC_GetPCLK2Freq();
-      |            ^~~~~
-../Core/Src/main.cpp: At global scope:
-../Core/Src/main.cpp:89:17: warning: 'start_time_ms' defined but not used [-Wunused-variable]
-   89 | static uint32_t start_time_ms = 0;
+../Core/Src/ICM20602.c: In function 'Read_Data_ACC':
+../Core/Src/ICM20602.c:204:22: warning: variable 'acc_y' set but not used [-Wunused-but-set-variable]
+  204 |         float acc_x, acc_y, acc_z, rad_XZ;
+      |                      ^~~~~
+../Core/Src/main.cpp:91:17: warning: 'start_time_ms' defined but not used [-Wunused-variable]
+   91 | static uint32_t start_time_ms = 0;
       |                 ^~~~~~~~~~~~~
-arm-none-eabi-g++ -o "PCB_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PCB_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+arm-none-eabi-g++ -o "PCB_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PCB_STM.map" -Wl,--gc-sections -static -u_printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 Finished building target: PCB_STM.elf
  
 arm-none-eabi-size  PCB_STM.elf 
 arm-none-eabi-objdump -h -S PCB_STM.elf  > "PCB_STM.list"
    text	   data	    bss	    dec	    hex	filename
-  74068	    376	  10272	  84716	  14aec	PCB_STM.elf
+  84684	    740	  10348	  95772	  1761c	PCB_STM.elf
 Finished building: default.size.stdout
  
 Finished building: PCB_STM.list
  
-17:38:22 **** Incremental Build of configuration Debug for project PCB_STM ****
+20:06:30 **** Incremental Build of configuration Debug for project PCB_STM ****
 make -j12 all 
 arm-none-eabi-size  PCB_STM.elf 
    text	   data	    bss	    dec	    hex	filename
-  74068	    376	  10272	  84716	  14aec	PCB_STM.elf
+  84684	    740	  10348	  95772	  1761c	PCB_STM.elf
+Finished building: default.size.stdout
+ 
+21:42:54 **** Incremental Build of configuration Debug for project PCB_STM ****
+make -j12 all 
+arm-none-eabi-size  PCB_STM.elf 
+   text	   data	    bss	    dec	    hex	filename
+  84684	    740	  10348	  95772	  1761c	PCB_STM.elf
 Finished building: default.size.stdout
  

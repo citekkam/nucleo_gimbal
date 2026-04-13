@@ -8,6 +8,8 @@
 
 // Pokud nemáte LL hlavičky v main.h, je potřeba je přidat (např. #include "stm32g4xx_ll_usart.h")
 
+extern UART_HandleTypeDef huart2;
+
 #define TX_BUFFER_LEN 255
 uint8_t tx_buffer[TX_BUFFER_LEN];
 
@@ -64,10 +66,22 @@ void send_ACK(uint8_t id)
 	ACK_msg my_ACK_msg;
 	uint16_t msg_len;
 
+	char uart_tx_buf[128];
+	uint16_t uart_tx_len = 0;
+
 	my_ACK_msg.id = id;
 
 	// llcp_prepareMessage will fill your TX buffer
 	msg_len = llcp_prepareMessage((uint8_t*)&my_ACK_msg, sizeof(my_ACK_msg), tx_buffer);
+
+	uart_tx_len += sprintf(uart_tx_buf + uart_tx_len, "ACK id=%d len=%d | ", id, msg_len);
+	    for (uint16_t i = 0; i < msg_len; i++) {
+	        uart_tx_len += sprintf(uart_tx_buf + uart_tx_len, "%d ", tx_buffer[i]);
+	    }
+	    uart_tx_len += sprintf(uart_tx_buf + uart_tx_len, "\r\n");
+
+	    // Send via USART2
+	    HAL_UART_Transmit(&huart2, (uint8_t*)uart_tx_buf, uart_tx_len, 100);
 
 	CDC_Transmit_FS(tx_buffer, msg_len);
 }

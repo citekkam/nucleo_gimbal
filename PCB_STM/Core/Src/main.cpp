@@ -79,6 +79,8 @@ extern volatile float acc_z;
 CompFilter filter;
 recieve_msg recieved_msg;
 Mahony_t myIMU;
+char uart_tx_buf[64];
+uint16_t uart_tx_len;
 float motor_position = 0;
 float reference_angle = 0;
 volatile uint8_t dma_done = 0;
@@ -316,33 +318,45 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  I2C_WatchdogCheck();
+
 	  bool message_received = receive_message();
 
 	  if (message_received) {
+
+		  uart_tx_len = sprintf(uart_tx_buf,
+		          "MSG: id=%d val=%d\r\n",
+		          recieved_msg.id,
+		          recieved_msg.value);
+		  HAL_UART_Transmit(&huart2, (uint8_t*)uart_tx_buf, uart_tx_len, 100);
+
 		  switch(recieved_msg.id) {
 			  case START: // zapnout
-				  //send_ACK(recieved_msg.id); //poslat jeste aktualni hodnotu myIMU.pitch
-				  send_imu(recieved_msg.id, myIMU.pitch, 0);
+				  send_ACK(recieved_msg.id); //poslat jeste aktualni hodnotu myIMU.pitch
+				  //send_imu(recieved_msg.id, myIMU.pitch, 0);
 
-				  while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL) {
+				  if (!running) {
 
-					odrv0.clearErrors();
+					  while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL) {
 
-					HAL_Delay(1);
+						odrv0.clearErrors();
 
-					odrv0.setState(ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL);
+						HAL_Delay(1);
 
-					for (int i = 0; i < 15; ++i) {
+						odrv0.setState(ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL);
 
-						HAL_Delay(10);
+						for (int i = 0; i < 15; ++i) {
 
-						pumpEvents(can_intf);
-					}
+							HAL_Delay(10);
+
+							pumpEvents(can_intf);
+						}
+					  }
+
+				  	  odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
+				  	  position_enable = 0;
+				  	  running = 1;
 				  }
-
-				  odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
-				  position_enable = 0;
-				  running = 1;
 
 				  break;
 			  case STOP: //vypnout
@@ -387,7 +401,8 @@ int main(void)
 		  }
 	  }
 
-
+/*
+ *
 	  if (imu_request) {
 	      imu_request = 0;
 
@@ -400,10 +415,13 @@ int main(void)
 
 	      Read_data();
 	  }
+ */
 
-	  if (dma_done) {
+	  if (dma_done && imu_request) {
+		  imu_request = 0;
 		  dma_done = 0;
 		  static uint16_t previous_tick = 0;
+		  static uint8_t uart_counter = 0;
 
 		  uint16_t current_tick = LL_TIM_GetCounter(TIM10);
 
@@ -413,6 +431,13 @@ int main(void)
 
 		  //CF_Update(&filter, gyro_y, deg_XZ, dt_float);
 		  IMU_Update_MF(&myIMU, gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, dt_float);
+
+		  uart_counter++;
+		  if (uart_counter >= 4) {
+			  uart_counter = 0;
+			  uart_tx_len = sprintf(uart_tx_buf, "%.2f\r\n", gyro_y);
+			  HAL_UART_Transmit(&huart2, (uint8_t*)uart_tx_buf, uart_tx_len, 100);
+		  }
 
 		  send_pos = 1;
 	  }
@@ -426,8 +451,6 @@ int main(void)
 	  }
 
 	  if (send_pos && position_enable && running) {
-		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
-		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 		  send_pos = 0;
 		  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
 		  //motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)+(filter.angle/360.0f)); // zkusit omezit ((-reference_angle/360.0f)+(filter.angle/360.0f)), na maximalni prirustek 20 stupnu
@@ -542,7 +565,7 @@ static void MX_I2C3_Init(void)
 
   /* USER CODE END I2C3_Init 1 */
   hi2c3.Instance = I2C3;
-  hi2c3.Init.ClockSpeed = 400000;
+  hi2c3.Init.ClockSpeed = 100000;
   hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c3.Init.OwnAddress1 = 0;
   hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -801,7 +824,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
     }
 }
- */
 
 void imu_callback()
 {
@@ -811,10 +833,11 @@ void imu_callback()
 	}
 
 }
+ */
 void feedback_callback()
 {
 	if (send_data) {
-		send_imu(57, myIMU.roll,0);
+		send_imu(57, myIMU.pitch,0);
 	}
 }
 

@@ -28,6 +28,15 @@ uint8_t data_gyro_MF[6];
 extern uint8_t dma_done;
 volatile uint8_t i2c_need_recovery = 0;
 
+volatile uint32_t dma_start_tick  = 0;
+volatile uint8_t  dma_in_progress = 0;
+#define I2C_DMA_TIMEOUT_MS  50
+
+#define I2C_DELAY_US(us) do { \
+    volatile uint32_t _c = (uint32_t)((us) * (SystemCoreClock / 1000000UL)); \
+    while (_c--); \
+} while(0)
+
 
 void Print2Console(const char* msg1, const char* msg2, int ret)
 {
@@ -118,6 +127,7 @@ void I2C_Bus_Recover() {
     // Konfigurace SDA jako GPIO Input (abychom viděli, kdy se uvolní)
     GPIO_InitStruct.Pin = GPIO_PIN_9;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     // 2. Poslat 9 pulsů na SCL
@@ -137,6 +147,7 @@ void I2C_Bus_Recover() {
     // SDA jde z 0 na 1, zatímco SCL je 1
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
     GPIO_InitStruct.Pin = GPIO_PIN_9;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
@@ -147,6 +158,30 @@ void I2C_Bus_Recover() {
     for(volatile int i=0; i<2000; i++);
 
     // 4. Vrátit piny zpět do I2C režimu (to udělá HAL_I2C_Init)
+}
+
+
+void I2C_WatchdogCheck()
+{
+    // Timeout check -- catches silent hangs (SDA stuck low, clock stretching forever)
+    if (dma_in_progress &&
+       (HAL_GetTick() - dma_start_tick) > I2C_DMA_TIMEOUT_MS)
+    {
+        dma_in_progress   = 0;
+        i2c_need_recovery = 1;
+    }
+
+    // Actual recovery -- safe here because we are in main (non-ISR) context
+    if (i2c_need_recovery) {
+        i2c_need_recovery = 0;
+
+        if (hi2c3.hdmarx != NULL) HAL_DMA_Abort(hi2c3.hdmarx);
+        HAL_I2C_DeInit(&hi2c3);
+        I2C_Bus_Recover();
+        HAL_I2C_Init(&hi2c3);
+
+        Read_data();    // restart the continuous DMA chain
+    }
 }
 
 
@@ -189,7 +224,8 @@ void Read_Data_ACC()
 
 void Read_data()
 {
-
+    dma_start_tick  = HAL_GetTick();
+    dma_in_progress = 1;
 	HAL_I2C_Mem_Read_DMA(&hi2c3, (ICM20602_ADDRESS<<1), REG_DATA_ACC, 1, data, 14);
 
 }
@@ -200,6 +236,8 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
     if(hi2c->Instance == I2C3) {
+    	dma_in_progress = 0;
+
     	static int16_t acc_x_raw, acc_y_raw, acc_z_raw;
 		static float rad_XZ;
 
@@ -224,20 +262,17 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 		gyro_z = ((float)gyro_z_raw/GYRO_SCALE) * DEG2RAD;
 
         dma_done = 1;
+
+        Read_data();
     }
 }
 
 void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 {
-	if (hi2c->hdmarx) HAL_DMA_Abort(hi2c->hdmarx);
-
-	HAL_I2C_DeInit(&hi2c3);
-	I2C_Bus_Recover();
-	HAL_I2C_Init(&hi2c3);
-
-	Read_data();
-
-	//dma_done = 0;
+	if (hi2c->Instance == I2C3) {
+	        dma_in_progress   = 0;   // stop watchdog counting (recovery handles restart)
+	        i2c_need_recovery = 1;   // defer actual recovery to main-loop context
+	    }
 }
 
 void IMU_Init_MF(Mahony_t *filter, float kp, float ki) {
