@@ -61,6 +61,43 @@ void send_imu(uint8_t id, uint8_t angle_data, uint8_t angle_drone) {
 	CDC_Transmit_FS(tx_buffer, msg_len);
 }
 
+void send_imu_raw(uint8_t id, int16_t ax,int16_t ay,int16_t az,int16_t gx, int16_t gy, int16_t gz) {
+	imu_msg_raw my_msg_imu_raw;
+	uint16_t msg_len;
+
+	my_msg_imu_raw.id = id;
+	//my_msg_imsu.t_ms = 42;
+	my_msg_imu_raw.ax = ax;
+	my_msg_imu_raw.ay = ay;
+	my_msg_imu_raw.az = az;
+	my_msg_imu_raw.gx = gx;
+	my_msg_imu_raw.gy = gy;
+	my_msg_imu_raw.gz = gz;
+
+	// llcp_prepareMessage will fill your TX buffer
+	msg_len = llcp_prepareMessage((uint8_t*)&my_msg_imu_raw, sizeof(my_msg_imu_raw), tx_buffer);
+
+	// Odeslání přes LL
+	CDC_Transmit_FS(tx_buffer, msg_len);
+}
+
+void send_plot_data(uint8_t id, int16_t angle_motor,int16_t angle_imu) {
+	plot_data my_plot_data;
+	uint16_t msg_len;
+
+	my_plot_data.id = id;
+	//my_msg_imsu.t_ms = 42;
+	my_plot_data.angle_motor = angle_motor;
+	my_plot_data.angle_imu = angle_imu;
+
+
+	// llcp_prepareMessage will fill your TX buffer
+	msg_len = llcp_prepareMessage((uint8_t*)&my_plot_data, sizeof(my_plot_data), tx_buffer);
+
+	// Odeslání přes LL
+	CDC_Transmit_FS(tx_buffer, msg_len);
+}
+
 void send_ACK(uint8_t id)
 {
 	ACK_msg my_ACK_msg;
@@ -131,6 +168,11 @@ bool receive_message()
 						  break;
 						}
 						case START_INFO_ID: {
+						  memcpy(&recieved_msg, llcp_message_ptr->payload, sizeof(recieve_msg));
+						  got_valid_msg = true;
+						  break;
+						}
+						case STOP_INFO_ID: {
 						  memcpy(&recieved_msg, llcp_message_ptr->payload, sizeof(recieve_msg));
 						  got_valid_msg = true;
 						  break;

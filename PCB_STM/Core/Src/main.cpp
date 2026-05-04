@@ -76,13 +76,15 @@ extern volatile float gyro_z;
 extern volatile float acc_x;
 extern volatile float acc_y;
 extern volatile float acc_z;
+
 CompFilter filter;
 recieve_msg recieved_msg;
 Mahony_t myIMU;
 char uart_tx_buf[64];
 uint16_t uart_tx_len;
 float motor_position = 0;
-float reference_angle = 0;
+float error_position = 0;
+int8_t reference_angle = 0;
 volatile uint8_t dma_done = 0;
 volatile uint8_t imu_request = 0;
 static uint8_t send_pos = 0;
@@ -221,12 +223,13 @@ int main(void)
   ICM20602_Init();
   Read_data();
   //CF_Init(&filter, 0.0);
-  IMU_Init_MF(&myIMU, 1.5f, 0.001f);
+  IMU_Init_MF(&myIMU, 0.4f, 0.00001f);
 
 
   /*
    *
-   */
+  */
+
   odrv0.onFeedback(onFeedback, &odrv0_user_data);
   odrv0.onStatus(onHeartbeat, &odrv0_user_data);
 
@@ -318,6 +321,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
 	  I2C_WatchdogCheck();
 
 	  bool message_received = receive_message();
@@ -381,7 +385,7 @@ int main(void)
 				  }
 				  break;
 			  case REFERENCE_ANGLE_ID:
-				  reference_angle = (float)recieved_msg.value;
+				  reference_angle = (int8_t)recieved_msg.value;
 				  send_ACK(recieved_msg.id);
 				  /*
 				  */
@@ -420,6 +424,7 @@ int main(void)
 	  if (dma_done && imu_request) {
 		  imu_request = 0;
 		  dma_done = 0;
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
 		  static uint16_t previous_tick = 0;
 		  static uint8_t uart_counter = 0;
 
@@ -431,17 +436,12 @@ int main(void)
 
 		  //CF_Update(&filter, gyro_y, deg_XZ, dt_float);
 		  IMU_Update_MF(&myIMU, gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, dt_float);
-
-		  uart_counter++;
-		  if (uart_counter >= 4) {
-			  uart_counter = 0;
-			  uart_tx_len = sprintf(uart_tx_buf, "%.2f\r\n", gyro_y);
-			  HAL_UART_Transmit(&huart2, (uint8_t*)uart_tx_buf, uart_tx_len, 100);
-		  }
-
 		  send_pos = 1;
+
 	  }
 
+/*
+ *
 	  if (!position_enable) {
 		  value++;
 		  if (value >= 500000) {
@@ -449,18 +449,34 @@ int main(void)
 			  position_enable = 1;
 		  }
 	  }
+ */
 
-	  if (send_pos && position_enable && running) {
+	  if (send_pos && running) {  //position_enable
+
 		  send_pos = 0;
 		  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
-		  //motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)+(filter.angle/360.0f)); // zkusit omezit ((-reference_angle/360.0f)+(filter.angle/360.0f)), na maximalni prirustek 20 stupnu
-		  motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f)); // zkusit omezit ((-reference_angle/360.0f)+(filter.angle/360.0f)), na maximalni prirustek 20 stupnu
-		  if (motor_position >= -0.25 && motor_position <=0.25) {
-		    odrv0.setPosition(motor_position, 0.0, 0.0);
+		/*
+		 *
+		 */
+		  error_position = (-reference_angle/360.0f)-(myIMU.pitch/360.0f);
+		  if (error_position <= -0.055f) {
+			  error_position = -0.055;
+		  } else if (error_position >= 0.055f) {
+			  error_position = 0.055;
+		  } else {
 		  }
+		  motor_position = feedback.Pos_Estimate + error_position;
+		  //motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f));
+		  if (motor_position >= -0.25 && motor_position <=0.25) {
+			//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+			//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+			  odrv0.setPosition(motor_position, 0.0, 0.0);
+		  }
+
+		  send_plot_data(57,(int16_t)(feedback.Pos_Estimate*10000.0f), (int16_t)(myIMU.pitch*100.0f));
+
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 	  }
-
-
 
   }
   /* USER CODE END 3 */

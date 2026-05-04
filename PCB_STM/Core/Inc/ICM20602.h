@@ -19,12 +19,12 @@ extern "C" {
 #define FIFO_OFF_REG		0x23
 #define FIFO_DENIED_REG		0x6A
 
-#define FS_GYRO_2000 	0x1A // 0x18 pro scale 2000 dps
+#define FS_GYRO_2000 	0x18 // 0x18 pro scale 2000 dps
 #define FS_ACC_8G 		0x18 // scale 16g
 #define WAKE_AND_PLL 	0x02
-#define BANDWIDTH 		0x07 // bandwidth 92Hz
-#define BANDWIDTH_ACC 	0x07 // puvodne byla 5
-#define FS500 			0x01 // pro 500Hz =1 pro 100Hz =9 pro 1kHz =0
+#define BANDWIDTH 		0x00 // bandwidth 92Hz
+#define BANDWIDTH_ACC 	0x02 // puvodne byla 5
+#define FS500 			0x00 // pro 500Hz =1 pro 100Hz =9 pro 1kHz =0
 #define FIFO_OFF		0x00
 #define FIFO			0x00
 

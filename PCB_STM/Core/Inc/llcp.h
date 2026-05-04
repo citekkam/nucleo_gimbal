@@ -38,6 +38,26 @@ typedef struct __attribute__((__packed__))
 {
 	uint8_t  id;
 	//uint32_t t_ms;
+	int16_t	 ax;
+	int16_t	 ay;
+	int16_t	 az;
+	int16_t	 gx;
+	int16_t	 gy;
+	int16_t	 gz;
+}imu_msg_raw;
+
+typedef struct __attribute__((__packed__))
+{
+	uint8_t  id;
+	//uint32_t t_ms;
+	int16_t	 angle_motor;
+	int16_t	 angle_imu;
+}plot_data;
+
+typedef struct __attribute__((__packed__))
+{
+	uint8_t  id;
+	//uint32_t t_ms;
 	uint8_t    value;
 }recieve_msg;
 
@@ -48,6 +68,8 @@ typedef struct __attribute__((__packed__))
 
 void send_heartbeat();
 void send_imu(uint8_t id, uint8_t angle_data, uint8_t angle_drone);
+void send_imu_raw(uint8_t id, int16_t ax,int16_t ay,int16_t az,int16_t gx, int16_t gy, int16_t gz);
+void send_plot_data(uint8_t id, int16_t angle_motor,int16_t angle_imu);
 void send_ACK(uint8_t id);
 bool receive_message();
 extern recieve_msg recieved_msg;
