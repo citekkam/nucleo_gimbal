@@ -81,7 +81,7 @@ void send_imu_raw(uint8_t id, int16_t ax,int16_t ay,int16_t az,int16_t gx, int16
 	CDC_Transmit_FS(tx_buffer, msg_len);
 }
 
-void send_plot_data(uint8_t id, int16_t angle_motor,int16_t angle_imu, int16_t reference_angle) {
+void send_plot_data(uint8_t id, int16_t angle_motor,int16_t angle_imu) {
 	plot_data my_plot_data;
 	uint16_t msg_len;
 
@@ -89,7 +89,6 @@ void send_plot_data(uint8_t id, int16_t angle_motor,int16_t angle_imu, int16_t r
 	//my_msg_imsu.t_ms = 42;
 	my_plot_data.angle_motor = angle_motor;
 	my_plot_data.angle_imu = angle_imu;
-	my_plot_data.reference_angle = reference_angle;
 
 
 	// llcp_prepareMessage will fill your TX buffer

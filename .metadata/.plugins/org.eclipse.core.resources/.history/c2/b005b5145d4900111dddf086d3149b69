@@ -466,14 +466,14 @@ int main(void)
 		  } else {
 		  }
 		  motor_position = feedback.Pos_Estimate + error_position;
-		  motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f));
+		  //motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f));
 		  if (motor_position >= -0.25 && motor_position <=0.25) {
 			//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
 			//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-			odrv0.setPosition(motor_position, 0.0, 0.0);
+			  odrv0.setPosition(motor_position, 0.0, 0.0);
 		  }
 
-		  send_plot_data(57,(int16_t)(feedback.Pos_Estimate*10000.0f), (int16_t)(myIMU.pitch*100.0f), (int16_t)reference_angle);
+		  send_plot_data(57,(int16_t)(feedback.Pos_Estimate*10000.0f), (int16_t)(myIMU.pitch*100.0f));
 
 		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 	  }
@@ -820,6 +820,8 @@ int _write(int file, char *ptr, int len) {
  */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 	pumpEvents(can_intf);
 }
 

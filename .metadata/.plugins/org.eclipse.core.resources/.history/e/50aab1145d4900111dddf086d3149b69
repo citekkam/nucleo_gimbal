@@ -237,8 +237,8 @@ void Read_data()
 void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 
 {
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
     if(hi2c->Instance == I2C3) {
     	dma_in_progress = 0;
 

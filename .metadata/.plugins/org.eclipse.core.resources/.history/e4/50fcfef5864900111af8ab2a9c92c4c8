@@ -466,14 +466,14 @@ int main(void)
 		  } else {
 		  }
 		  motor_position = feedback.Pos_Estimate + error_position;
-		  motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f));
+		  //motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f));
 		  if (motor_position >= -0.25 && motor_position <=0.25) {
 			//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
 			//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-			odrv0.setPosition(motor_position, 0.0, 0.0);
+			//  odrv0.setPosition(motor_position, 0.0, 0.0);
 		  }
 
-		  send_plot_data(57,(int16_t)(feedback.Pos_Estimate*10000.0f), (int16_t)(myIMU.pitch*100.0f), (int16_t)reference_angle);
+		  //send_plot_data(57,(int16_t)(feedback.Pos_Estimate*10000.0f), (int16_t)(myIMU.pitch*100.0f));
 
 		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 	  }
@@ -581,7 +581,7 @@ static void MX_I2C3_Init(void)
 
   /* USER CODE END I2C3_Init 1 */
   hi2c3.Instance = I2C3;
-  hi2c3.Init.ClockSpeed = 400000;
+  hi2c3.Init.ClockSpeed = 100000;
   hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c3.Init.OwnAddress1 = 0;
   hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -625,7 +625,7 @@ static void MX_TIM6_Init(void)
   /* USER CODE END TIM6_Init 1 */
   TIM_InitStruct.Prescaler = 83;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 1999;
+  TIM_InitStruct.Autoreload = 4999;
   LL_TIM_Init(TIM6, &TIM_InitStruct);
   LL_TIM_EnableARRPreload(TIM6);
   LL_TIM_SetTriggerOutput(TIM6, LL_TIM_TRGO_RESET);
@@ -820,6 +820,8 @@ int _write(int file, char *ptr, int len) {
  */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 	pumpEvents(can_intf);
 }
 

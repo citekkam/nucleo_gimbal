@@ -266,7 +266,7 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 
         dma_done = 1;
 
-        //send_imu_raw(57,acc_x_raw,acc_y_raw,acc_z_raw, gyro_x_raw,gyro_y_raw,gyro_z_raw);
+        send_imu_raw(57,acc_x_raw,acc_y_raw,acc_z_raw, gyro_x_raw,gyro_y_raw,gyro_z_raw);
 
         Read_data();
     }
