@@ -1,0 +1,26 @@
+2026-06-24 13:17:48,937 [INFO] Activator:176 - 
+
+
+2026-06-24 13:17:48,946 [INFO] Activator:177 - !SESSION log4j initialized
+2026-06-24 13:17:53,739 [INFO] LogOutputStream:77 - [STDOUT_REDIRECT] 
+2026-06-24 15:23:25,473 [INFO] Activator:176 - 
+
+
+2026-06-24 15:23:25,475 [INFO] Activator:177 - !SESSION log4j initialized
+2026-06-24 15:23:29,830 [INFO] LogOutputStream:77 - [STDOUT_REDIRECT] 
+2026-06-24 15:44:14,440 [INFO] Activator:176 - 
+
+
+2026-06-24 15:44:14,444 [INFO] Activator:177 - !SESSION log4j initialized
+2026-06-24 15:44:17,637 [INFO] LogOutputStream:77 - [STDOUT_REDIRECT] 
+2026-06-24 16:22:09,042 [INFO] Activator:176 - 
+
+
+2026-06-24 16:22:09,043 [INFO] Activator:177 - !SESSION log4j initialized
+2026-06-24 16:22:11,194 [INFO] LogOutputStream:77 - [STDOUT_REDIRECT] 
+2026-06-24 17:03:52,436 [ERROR] LogOutputStream:75 - [STDERR_REDIRECT] SWT SessionManagerDBus: Failed to UnregisterClient: GDBus.Error:org.freedesktop.DBus.Error.NoReply: Message recipient disconnected from message bus without replying
+2026-06-24 19:45:32,451 [INFO] Activator:176 - 
+
+
+2026-06-24 19:45:32,454 [INFO] Activator:177 - !SESSION log4j initialized
+2026-06-24 19:45:36,161 [INFO] LogOutputStream:77 - [STDOUT_REDIRECT] 

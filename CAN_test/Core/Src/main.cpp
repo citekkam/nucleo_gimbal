@@ -1,62 +1,20 @@
 /* USER CODE BEGIN Header */
-
 /**
-
-******************************************************************************
-
-* @file : main.c
-
-* @brief : Main program body
-
-******************************************************************************
-
-* @attention
-
-*
-
-* Copyright (c) 2025 STMicroelectronics.
-
-* All rights reserved.
-
-*
-
-* This software is licensed under terms that can be found in the L	  /*
-	   *
-	  Read_Gyro();
-	  Read_Data_ACC();
-	  CF_Update(&filter, gyro_y,deg_XZ);
-
-	  cf_update_count++;
-
-	  uint32_t current_time = HAL_GetTick();
-
-		if ((current_time - last_print_time) >= 1000)
-		{
-			uint32_t frequency = cf_update_count;
-
-			char freq_msg[64];
-			int len = sprintf(freq_msg, "FREKVENCE: %lu Hz\r\n", (unsigned long)frequency);
-
-			// Odeslani pres UART/USART (huart2)
-			HAL_UART_Transmit(&huart2, (uint8_t *)freq_msg, len, 100);
-
-			// Resetovani casu a citace pro novy interval
-			last_print_time = current_time;
-			cf_update_count = 0;
-		}
-	   */
-	  /*ICENSE file
-
-* in the root directory of this software component.
-
-* If no LICENSE file comes with this software, it is provided AS-IS.
-
-*
-
-******************************************************************************
-
-*/
-
+  ******************************************************************************
+  * @file           : main.c
+  * @brief          : Main program body
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2026 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -114,26 +72,38 @@ bool received_feedback = false;
 /* Private variables ---------------------------------------------------------*/
 CAN_HandleTypeDef hcan1;
 
-I2C_HandleTypeDef hi2c1;
+I2C_HandleTypeDef hi2c3;
+DMA_HandleTypeDef hdma_i2c3_rx;
 
-TIM_HandleTypeDef htim6;
-
-UART_HandleTypeDef huart2;
+PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
 /* USER CODE BEGIN PV */
 //-------------------------------------------ICM---------------------------------
-float gx, gy, gz;
-int iic_err = 0;
-extern float gyro_y;
-extern float deg_XZ;
-char msg5[64];
-//static uint32_t last_hb = 0;
-//extern LLCP_Receiver_t llcp_receiver;
-uint8_t value = 0;
-volatile uint32_t cf_update_count = 0;
-volatile uint32_t last_print_time = 0;
-volatile bool cf_ready_for_print_flag = false;
+extern volatile uint8_t  dma_in_progress;
+
 CompFilter filter;
+//recieve_msg recieved_msg;
+//Mahony_t myIMU;
+float motor_position = 0;
+float error_position = 0;
+int8_t reference_angle = 0;
+volatile uint8_t dma_done = 0;
+volatile uint8_t imu_request = 0;
+static uint8_t send_pos = 0;
+extern volatile uint8_t i2c_need_recovery;
+uint8_t static position_enable = 1;
+uint8_t running = 0;
+uint32_t value = 0;
+uint8_t send_data = 0;
+extern volatile float gyro_y;
+extern volatile float deg_XZ;
+
+float test_angle_gyro = 0;
+
+extern volatile uint8_t  dma_in_progress;
+extern volatile uint8_t i2c_need_recovery;
+
+Get_Encoder_Estimates_msg_t feedback;
 //-------------------------------------------ICM---------------------------------
 
 CubeCANInterface can_intf = {&hcan1}; // Our glue struct holding the HAL handle
@@ -152,28 +122,14 @@ ODriveUserData odrv0_user_data;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_USB_OTG_FS_PCD_Init(void);
+static void MX_TIM10_Init(void);
+static void MX_I2C3_Init(void);
+static void MX_TIM11_Init(void);
 static void MX_CAN1_Init(void);
-static void MX_I2C1_Init(void);
-static void MX_TIM6_Init(void);
 /* USER CODE BEGIN PFP */
-
-
-extern "C" int _write(int file, char *ptr, int len) {
-
-int DataIdx;
-
-for (DataIdx = 0; DataIdx < len; DataIdx++) {
-
-// Send the character to ITM Port 0
-
-ITM_SendChar((uint32_t)*ptr++);
-
-}
-
-return len;
-
-}
 
 
 void onHeartbeat(Heartbeat_msg_t& msg, void* user_data) {
@@ -240,22 +196,20 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
+  MX_USB_OTG_FS_PCD_Init();
+  MX_TIM10_Init();
+  MX_I2C3_Init();
+  MX_TIM11_Init();
   MX_CAN1_Init();
-  MX_I2C1_Init();
-  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
-  //-----------------------------------------------ICM--------------------------------------
-  ICM20602_Init(/*ad0=*/0, /*dlpf_cfg=*/2, /*smpl_div=*/4, /*fs=*/GFS_1000);
-  CF_Init(&filter, 0.0);
-  //-----------------------------------------------ICM--------------------------------------
-  HAL_TIM_Base_Start_IT(&htim6);
-  //HAL_TIM_Base_Start(&htim6);
-  __enable_irq();
-  /*
-   *
 
-printf("Starting ODriveCAN (SWV) for Nucleo-F446RE...\r\n");
+  ICM20602_Init();
+  CF_Init(&filter, 0);
+
+
+//printf("Starting ODriveCAN (SWV) for Nucleo-F446RE...\r\n");
 
 //printf("SYSCLK: %ld Hz, APB1: %ld Hz\r\n", HAL_RCC_GetSysClockFreq(), HAL_RCC_GetPCLK1Freq());
 
@@ -292,7 +246,7 @@ sFilterConfig.FilterActivation = ENABLE;
 
 if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK) {
 
-printf("Error: CAN Filter Config Failed\r\n");
+//printf("Error: CAN Filter Config Failed\r\n");
 
 Error_Handler();
 
@@ -303,16 +257,15 @@ Error_Handler();
 
 if (HAL_CAN_Start(&hcan1) != HAL_OK) {
 
-printf("Error: HAL_CAN_Start Failed\r\n");
+//printf("Error: HAL_CAN_Start Failed\r\n");
 
 Error_Handler();
 
 }
 
-
 // --- Wait for ODrive ---
 
-printf("Waiting for ODrive...\r\n");
+//printf("Waiting for ODrive...\r\n");
 
 while (!odrv0_user_data.received_heartbeat) {
 
@@ -323,27 +276,30 @@ HAL_Delay(100); // Wait 100ms
 }
 
 
-printf("Found ODrive!\r\n");
+//printf("Found ODrive!\r\n");
 
 
 // --- Request Bus Voltage ---
 
-printf("Attempting to read bus voltage and current...\r\n");
+//printf("Attempting to read bus voltage and current...\r\n");
 
+/*
+ *
 Get_Bus_Voltage_Current_msg_t vbus;
 
 if (!odrv0.request(vbus, 1000)) {
 
-printf("VBus request failed!\r\n");
+//printf("VBus request failed!\r\n");
 
 Error_Handler();
 
 }
 
+ */
 
 // --- Set Closed Loop Control ---
 
-printf("Enabling closed loop control...\r\n");
+//printf("Enabling closed loop control...\r\n");
 
 while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL) {
 
@@ -367,10 +323,17 @@ pumpEvents(can_intf); // Keep checking for heartbeats
 }
 
 
-printf("ODrive running!\r\n");
-   */
+//printf("ODrive running!\r\n");
 
 
+  LL_TIM_SetCounter(TIM10, 0);
+  LL_TIM_EnableIT_UPDATE(TIM10);
+  LL_TIM_EnableCounter(TIM10);
+
+  LL_TIM_SetCounter(TIM11, 0);
+  LL_TIM_EnableCounter(TIM11);
+
+  Read_data();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -379,52 +342,16 @@ printf("ODrive running!\r\n");
 while (1)
 
 {
-	if (cf_ready_for_print_flag)
-	    {
-	        cf_ready_for_print_flag = false;
-
-	        /*
-	         *
-	        uint32_t current_time = HAL_GetTick();
-
-			// Vypis probehne kazdou 1 sekundu (1000 ms)
-			if ((current_time - last_print_time) >= 1000)
-			{
-				uint32_t frequency = cf_update_count;
-
-				char freq_msg[64];
-				int len = sprintf(freq_msg, "FREKVENCE: %lu Hz\r\n", (unsigned long)frequency);
-
-				// Odeslani pres UART/USART (huart2)
-				HAL_UART_Transmit(&huart2, (uint8_t *)freq_msg, len, 100);
-
-				// Resetovani casu a citace pro novy interval
-				last_print_time = current_time;
-				cf_update_count = 0;
-			}
-
-	         */
-	        // Vypis uhlu (pomala UART operace)
-	        sprintf(msg5, "angle: %d \r\n", (int)(filter.angle));
-	        HAL_UART_Transmit(&huart2, (uint8_t*)msg5, strlen(msg5), 100);
-
-	    }
-
-	/*
-
-	Read_Gyro();
-	Read_Data_ACC();
-	CF_Update(&filter, gyro_y,deg_XZ);
-	 */
-
-
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-/*
- *
-pumpEvents(can_intf);
+
+	        // 4. Kontrola, zda se I2C neseklo (vaše funkce)
+	        I2C_WatchdogCheck();
+
+			pumpEvents(can_intf);
+	/*
+	 *
 
 
 float SINE_PERIOD = 2.0f; // Period in seconds
@@ -440,29 +367,10 @@ odrv0.setPosition(
 
 sin(phase), // position (in turns)
 
-cos(phase) * (TWO_PI / SINE_PERIOD) // velocity feedforward (in turns/sec)
+cos(phase) * (TWO_PI / SINE_PERIOD), // velocity feedforward (in turns/sec)
 
-);
-
-
-// Print feedback if we have new data
-
-if (odrv0_user_data.received_feedback) {
-
-Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
-
-odrv0_user_data.received_feedback = false;
-
-
-// Use printf for serial plotter format
-
-printf("odrv0-pos,odrv0-vel");
-
-}
-
-
-HAL_Delay(1);
- */
+0);
+	 */
 
 
 }
@@ -492,18 +400,11 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 180;
+  RCC_OscInitStruct.PLL.PLLN = 168;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 2;
+  RCC_OscInitStruct.PLL.PLLQ = 7;
   RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Activate the Over-Drive mode
-  */
-  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
   {
     Error_Handler();
   }
@@ -521,6 +422,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+  HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_SYSCLK, RCC_MCODIV_4);
 }
 
 /**
@@ -533,19 +435,17 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE BEGIN CAN1_Init 0 */
 
-
   /* USER CODE END CAN1_Init 0 */
 
   /* USER CODE BEGIN CAN1_Init 1 */
 
-
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 10;
+  hcan1.Init.Prescaler = 6;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_14TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_3TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_11TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
   hcan1.Init.AutoWakeUp = DISABLE;
@@ -558,80 +458,109 @@ static void MX_CAN1_Init(void)
   }
   /* USER CODE BEGIN CAN1_Init 2 */
 
-
   /* USER CODE END CAN1_Init 2 */
 
 }
 
 /**
-  * @brief I2C1 Initialization Function
+  * @brief I2C3 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_I2C1_Init(void)
+static void MX_I2C3_Init(void)
 {
 
-  /* USER CODE BEGIN I2C1_Init 0 */
+  /* USER CODE BEGIN I2C3_Init 0 */
 
-  /* USER CODE END I2C1_Init 0 */
+  /* USER CODE END I2C3_Init 0 */
 
-  /* USER CODE BEGIN I2C1_Init 1 */
+  /* USER CODE BEGIN I2C3_Init 1 */
 
-  /* USER CODE END I2C1_Init 1 */
-  hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 100000;
-  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
-  hi2c1.Init.OwnAddress1 = 0;
-  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c1.Init.OwnAddress2 = 0;
-  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  /* USER CODE END I2C3_Init 1 */
+  hi2c3.Instance = I2C3;
+  hi2c3.Init.ClockSpeed = 400000;
+  hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c3.Init.OwnAddress1 = 0;
+  hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c3.Init.OwnAddress2 = 0;
+  hi2c3.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c3.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c3) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN I2C1_Init 2 */
+  /* USER CODE BEGIN I2C3_Init 2 */
 
-  /* USER CODE END I2C1_Init 2 */
+  /* USER CODE END I2C3_Init 2 */
 
 }
 
 /**
-  * @brief TIM6 Initialization Function
+  * @brief TIM10 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_TIM6_Init(void)
+static void MX_TIM10_Init(void)
 {
 
-  /* USER CODE BEGIN TIM6_Init 0 */
+  /* USER CODE BEGIN TIM10_Init 0 */
 
-  /* USER CODE END TIM6_Init 0 */
+  /* USER CODE END TIM10_Init 0 */
 
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  LL_TIM_InitTypeDef TIM_InitStruct = {0};
 
-  /* USER CODE BEGIN TIM6_Init 1 */
+  /* Peripheral clock enable */
+  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM10);
 
-  /* USER CODE END TIM6_Init 1 */
-  htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 360-1;
-  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 1000-1;
-  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM6_Init 2 */
+  /* TIM10 interrupt Init */
+  NVIC_SetPriority(TIM1_UP_TIM10_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
 
-  /* USER CODE END TIM6_Init 2 */
+  /* USER CODE BEGIN TIM10_Init 1 */
+
+  /* USER CODE END TIM10_Init 1 */
+  TIM_InitStruct.Prescaler = 167;
+  TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
+  TIM_InitStruct.Autoreload = 1000-LL_TIM_IC_FILTER_FDIV1_N2;
+  TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
+  LL_TIM_Init(TIM10, &TIM_InitStruct);
+  LL_TIM_DisableARRPreload(TIM10);
+  /* USER CODE BEGIN TIM10_Init 2 */
+
+  /* USER CODE END TIM10_Init 2 */
+
+}
+
+/**
+  * @brief TIM11 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM11_Init(void)
+{
+
+  /* USER CODE BEGIN TIM11_Init 0 */
+
+  /* USER CODE END TIM11_Init 0 */
+
+  LL_TIM_InitTypeDef TIM_InitStruct = {0};
+
+  /* Peripheral clock enable */
+  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM11);
+
+  /* USER CODE BEGIN TIM11_Init 1 */
+
+  /* USER CODE END TIM11_Init 1 */
+  TIM_InitStruct.Prescaler = 16799;
+  TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
+  TIM_InitStruct.Autoreload = 65535;
+  TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
+  LL_TIM_Init(TIM11, &TIM_InitStruct);
+  LL_TIM_DisableARRPreload(TIM11);
+  /* USER CODE BEGIN TIM11_Init 2 */
+
+  /* USER CODE END TIM11_Init 2 */
 
 }
 
@@ -648,26 +577,95 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 0 */
 
+  LL_USART_InitTypeDef USART_InitStruct = {0};
+
+  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  /* Peripheral clock enable */
+  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
+
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+  /**USART2 GPIO Configuration
+  PA2   ------> USART2_TX
+  PA3   ------> USART2_RX
+  */
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_2|LL_GPIO_PIN_3;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Alternate = LL_GPIO_AF_7;
+  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /* USER CODE BEGIN USART2_Init 1 */
 
 
   /* USER CODE END USART2_Init 1 */
-  huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
-  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
-  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart2) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  USART_InitStruct.BaudRate = 115200;
+  USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_8B;
+  USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
+  USART_InitStruct.Parity = LL_USART_PARITY_NONE;
+  USART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX_RX;
+  USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
+  USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
+  LL_USART_Init(USART2, &USART_InitStruct);
+  LL_USART_ConfigAsyncMode(USART2);
+  LL_USART_Enable(USART2);
   /* USER CODE BEGIN USART2_Init 2 */
 
 
   /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * @brief USB_OTG_FS Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USB_OTG_FS_PCD_Init(void)
+{
+
+  /* USER CODE BEGIN USB_OTG_FS_Init 0 */
+
+  /* USER CODE END USB_OTG_FS_Init 0 */
+
+  /* USER CODE BEGIN USB_OTG_FS_Init 1 */
+
+  /* USER CODE END USB_OTG_FS_Init 1 */
+  hpcd_USB_OTG_FS.Instance = USB_OTG_FS;
+  hpcd_USB_OTG_FS.Init.dev_endpoints = 6;
+  hpcd_USB_OTG_FS.Init.speed = PCD_SPEED_FULL;
+  hpcd_USB_OTG_FS.Init.dma_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
+  hpcd_USB_OTG_FS.Init.Sof_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.low_power_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.lpm_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.vbus_sensing_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.use_dedicated_ep1 = DISABLE;
+  if (HAL_PCD_Init(&hpcd_USB_OTG_FS) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USB_OTG_FS_Init 2 */
+
+  /* USER CODE END USB_OTG_FS_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 0, 5);
+  HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
 
 }
 
@@ -691,7 +689,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|LD2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -699,12 +697,20 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin;
+  /*Configure GPIO pins : PA1 LD2_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|LD2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PC9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -713,22 +719,86 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
-    if (htim->Instance == TIM6)
-    {
-        Read_Gyro();
-        Read_Data_ACC();
-
-        CF_Update(&filter, gyro_y, deg_XZ);
-
-        // 3. Signalizace hlavni smycce, ze je cas na pomale I/O
-        cf_ready_for_print_flag = true;
-
-        // 4. Inkrementace citace pro mereni frekvence
-        cf_update_count++;
-    }
+	pumpEvents(can_intf);
 }
+
+int __io_putchar(int ch) {
+    // Wait until TXE flag is set (Transmit Data Register Empty)
+    while (!LL_USART_IsActiveFlag_TXE(USART2));
+
+    // Transmit character
+    LL_USART_TransmitData8(USART2, (uint8_t)ch);
+
+    return ch;
+}
+
+int _write(int file, char *ptr, int len) {
+    for (int i = 0; i < len; i++)
+    {
+        while (!LL_USART_IsActiveFlag_TXE(USART2));
+        LL_USART_TransmitData8(USART2, (uint8_t)ptr[i]);
+    }
+
+    // Optional: wait for TC (Transmission Complete)
+    while (!LL_USART_IsActiveFlag_TC(USART2));
+
+    return len;
+}
+
+void Timer_callback()
+{
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+	if (dma_done == 1) {
+
+		test_angle_gyro += gyro_y * 0.001;
+
+		static uint16_t previous_tick = 0;
+		uint16_t current_tick = LL_TIM_GetCounter(TIM11);
+		uint16_t dt_tick = current_tick - previous_tick;
+		static float dt_float = (float)dt_tick * 0.0001f;
+		previous_tick = current_tick;
+
+		CF_Update(&filter, gyro_y, deg_XZ, dt_float);
+
+
+		feedback = odrv0_user_data.last_feedback;
+
+		/*
+		error_position = (-reference_angle/360.0f)-(myIMU.pitch/360.0f);
+		if (error_position <= -0.055f) {
+		  error_position = -0.055;
+		} else if (error_position >= 0.055f) {
+		  error_position = 0.055;
+		} else {
+		}
+		motor_position = feedback.Pos_Estimate + error_position;
+		 */
+		//motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f));
+		motor_position = feedback.Pos_Estimate - ((-reference_angle/360.0f)-(filter.angle/360.0f));
+		if (motor_position >= -0.25 && motor_position <=0.25) {
+			odrv0.setPosition(motor_position, 0.0, 0.0);
+		}
+
+		printf("%.3f,%.3f\r\n",
+		               filter.angle,
+		               feedback.Pos_Estimate);
+
+		dma_done = 0;
+
+		Read_data();
+	}
+
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+}
+#ifdef __cplusplus
+}
+#endif
 
 /* USER CODE END 4 */
 
@@ -740,15 +810,13 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
 
-/* User can add his own implementation to report the HAL error return state */
+	/* User can add his own implementation to report the HAL error return state */
 
-__disable_irq();
+	__disable_irq();
 
-while (1)
-
-{
-
-}
+	while (1)
+	{
+	}
 
   /* USER CODE END Error_Handler_Debug */
 }

@@ -9,9 +9,9 @@ extern "C" {
 #include <stdint.h>
 
 #define RECIEVE_MSG 42
-#define IMU_MSG_ID  51 // obsahuje uhel z IMU, polohu motoru(uhel drona)
+#define IMU_MSG_ID  51
 #define HEARTBEAT_MSG_ID 52
-#define REFERENCE_ANGLE_ID 53 // payload bude obsahovat hodonu uhlu ktery ma gimbal sledovat
+#define REFERENCE_ANGLE_ID 53
 #define START 56
 #define STOP 55
 #define START_INFO_ID 57

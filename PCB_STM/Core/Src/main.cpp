@@ -76,12 +76,11 @@ extern volatile float gyro_z;
 extern volatile float acc_x;
 extern volatile float acc_y;
 extern volatile float acc_z;
+extern volatile uint8_t  dma_in_progress;
 
 CompFilter filter;
 recieve_msg recieved_msg;
 Mahony_t myIMU;
-char uart_tx_buf[64];
-uint16_t uart_tx_len;
 float motor_position = 0;
 float error_position = 0;
 int8_t reference_angle = 0;
@@ -90,7 +89,6 @@ volatile uint8_t imu_request = 0;
 static uint8_t send_pos = 0;
 extern volatile uint8_t i2c_need_recovery;
 uint8_t static position_enable = 1;
-static uint32_t start_time_ms = 0;
 uint8_t running = 0;
 uint32_t value = 0;
 uint8_t send_data = 0;
@@ -210,33 +208,16 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  /*
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-  GPIO_InitStruct.Pin = GPIO_PIN_12;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;  // MAX DRIVE
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET); // D+ HIGH
-   */
 
-  //HAL_PCD_DevConnect(&hpcd_USB_OTG_FS);
-  ICM20602_Init();
-  Read_data();
-  //CF_Init(&filter, 0.0);
-  IMU_Init_MF(&myIMU, 0.4f, 0.00001f);
-
-
-  /*
-   *
-  */
+  //ICM20602_Init();
+  //Read_data();
+  IMU_Init_MF(&myIMU, 0.4f, 0.0001f);
 
   odrv0.onFeedback(onFeedback, &odrv0_user_data);
   odrv0.onStatus(onHeartbeat, &odrv0_user_data);
 
 
   // --- Configure CAN Filter ---
-
-  // This is CRITICAL for receiving any messages
 
   CAN_FilterTypeDef sFilterConfig;
 
@@ -306,11 +287,7 @@ int main(void)
   LL_TIM_SetCounter(TIM7, 0);
   LL_TIM_EnableIT_UPDATE(TIM7);
   LL_TIM_EnableCounter(TIM7);
-  /*
-  HAL_TIM_Base_Start_IT(&htim6);
-  HAL_TIM_Base_Start_IT(&htim7);
-  HAL_TIM_Base_Start_IT(&htim10);
-   */
+
 
   /* USER CODE END 2 */
 
@@ -327,32 +304,20 @@ int main(void)
 	  bool message_received = receive_message();
 
 	  if (message_received) {
-
-		  uart_tx_len = sprintf(uart_tx_buf,
-		          "MSG: id=%d val=%d\r\n",
-		          recieved_msg.id,
-		          recieved_msg.value);
-		  HAL_UART_Transmit(&huart2, (uint8_t*)uart_tx_buf, uart_tx_len, 100);
-
 		  switch(recieved_msg.id) {
-			  case START: // zapnout
-				  send_ACK(recieved_msg.id); //poslat jeste aktualni hodnotu myIMU.pitch
+			  case START:
+				  send_ACK(recieved_msg.id);
 				  //send_imu(recieved_msg.id, myIMU.pitch, 0);
 
 				  if (!running) {
 
 					  while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL) {
-
 						odrv0.clearErrors();
-
 						HAL_Delay(1);
-
 						odrv0.setState(ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL);
 
 						for (int i = 0; i < 15; ++i) {
-
 							HAL_Delay(10);
-
 							pumpEvents(can_intf);
 						}
 					  }
@@ -363,23 +328,18 @@ int main(void)
 				  }
 
 				  break;
-			  case STOP: //vypnout
+			  case STOP:
 				  send_ACK(recieved_msg.id);
 				  position_enable = 1;
 				  running = 0;
 
 				  while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_IDLE) {
-
 					odrv0.clearErrors();
-
 					HAL_Delay(1);
-
 					odrv0.setState(ODriveAxisState::AXIS_STATE_IDLE);
 
 					for (int i = 0; i < 15; ++i) {
-
 						HAL_Delay(10);
-
 						pumpEvents(can_intf);
 					}
 				  }
@@ -387,8 +347,6 @@ int main(void)
 			  case REFERENCE_ANGLE_ID:
 				  reference_angle = (int8_t)recieved_msg.value;
 				  send_ACK(recieved_msg.id);
-				  /*
-				  */
 				  odrv0.setPosition(-(reference_angle/360.0f), 0.0, 0);
 				  position_enable = 0;
 				  break;
@@ -405,28 +363,18 @@ int main(void)
 		  }
 	  }
 
-/*
- *
-	  if (imu_request) {
-	      imu_request = 0;
 
-	      if (HAL_I2C_GetState(&hi2c3) != HAL_I2C_STATE_READY) {
-	          // recover immediately
-	          HAL_I2C_DeInit(&hi2c3);
-	          I2C_Bus_Recover();
-	          HAL_I2C_Init(&hi2c3);
-	      }
-
-	      Read_data();
-	  }
- */
-
-	  if (dma_done && imu_request) {
+	  if (imu_request && !dma_in_progress) {
 		  imu_request = 0;
+		  Read_data();
+	  }
+
+	  if (dma_done) {
 		  dma_done = 0;
 		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 		  static uint16_t previous_tick = 0;
-		  static uint8_t uart_counter = 0;
 
 		  uint16_t current_tick = LL_TIM_GetCounter(TIM10);
 
@@ -434,30 +382,17 @@ int main(void)
 		  float dt_float = (float)dt_tick*0.0001;
 		  previous_tick = current_tick;
 
-		  //CF_Update(&filter, gyro_y, deg_XZ, dt_float);
 		  IMU_Update_MF(&myIMU, gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, dt_float);
 		  send_pos = 1;
 
 	  }
 
-/*
- *
-	  if (!position_enable) {
-		  value++;
-		  if (value >= 500000) {
-			  value = 0;
-			  position_enable = 1;
-		  }
-	  }
- */
 
-	  if (send_pos && running) {  //position_enable
+	  if (send_pos && running) {
 
 		  send_pos = 0;
 		  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
-		/*
-		 *
-		 */
+
 		  error_position = (-reference_angle/360.0f)-(myIMU.pitch/360.0f);
 		  if (error_position <= -0.055f) {
 			  error_position = -0.055;
@@ -466,14 +401,14 @@ int main(void)
 		  } else {
 		  }
 		  motor_position = feedback.Pos_Estimate + error_position;
-		  motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f));
+		  //motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f));
 		  if (motor_position >= -0.25 && motor_position <=0.25) {
 			//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
 			//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 			odrv0.setPosition(motor_position, 0.0, 0.0);
 		  }
 
-		  send_plot_data(57,(int16_t)(feedback.Pos_Estimate*10000.0f), (int16_t)(myIMU.pitch*100.0f), (int16_t)reference_angle);
+		  //send_plot_data(57,(int16_t)(feedback.Pos_Estimate*10000.0f), (int16_t)(myIMU.pitch*100.0f), (int16_t)reference_angle);
 
 		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 	  }
@@ -526,6 +461,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+  HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_HSE, RCC_MCODIV_2);
 }
 
 /**
@@ -625,7 +561,7 @@ static void MX_TIM6_Init(void)
   /* USER CODE END TIM6_Init 1 */
   TIM_InitStruct.Prescaler = 83;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 1999;
+  TIM_InitStruct.Autoreload = 4999;
   LL_TIM_Init(TIM6, &TIM_InitStruct);
   LL_TIM_EnableARRPreload(TIM6);
   LL_TIM_SetTriggerOutput(TIM6, LL_TIM_TRGO_RESET);
@@ -782,6 +718,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : PC9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
   /* USER CODE END MX_GPIO_Init_2 */
@@ -792,64 +736,11 @@ static void MX_GPIO_Init(void)
 extern "C" {
 #endif
 
-/*
- *
-int __io_putchar(int ch) {
-	// Wait until TXE flag is set (Transmit Data Register Empty)
-	    while (!LL_USART_IsActiveFlag_TXE(USART2));
-
-	    // Transmit character
-	    LL_USART_TransmitData8(USART2, (uint8_t)ch);
-
-	    return ch;
-}
-
-int _write(int file, char *ptr, int len) {
-	for (int i = 0; i < len; i++)
-	    {
-	        while (!LL_USART_IsActiveFlag_TXE(USART2));
-	        LL_USART_TransmitData8(USART2, (uint8_t)ptr[i]);
-	    }
-
-	    // Optional: wait for TC (Transmission Complete)
-	    while (!LL_USART_IsActiveFlag_TC(USART2));
-
-	    return len;
-}
-
- */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
 	pumpEvents(can_intf);
 }
 
-/*
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-    if (htim->Instance == TIM6)
-    {
-    	if(HAL_I2C_GetState(&hi2c3) == HAL_I2C_STATE_READY) {
-			Read_data();
-		}
-    }
-
-    if (htim->Instance == TIM7)
-    {
-    	if (send_data) {
-			send_ACK(57);
-		}
-    }
-}
-
-void imu_callback()
-{
-
-	if(HAL_I2C_GetState(&hi2c3) == HAL_I2C_STATE_READY) {
-		Read_data();
-	}
-
-}
- */
 void feedback_callback()
 {
 	if (send_data) {

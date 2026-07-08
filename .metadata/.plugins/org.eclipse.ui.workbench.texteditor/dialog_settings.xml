@@ -3,21 +3,21 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="false"/>
 	<list key="searchhistory">
+		<item value="hcan"/>
+		<item value="reference_angle"/>
+		<item value="dt_float"/>
+		<item value="p_read_data"/>
+		<item value="_write"/>
+		<item value="USART2"/>
+		<item value="printf"/>
+		<item value="CF_Update"/>
 		<item value="HAL_GPIO_WritePin"/>
 		<item value="setPosition"/>
 		<item value="HAL_PCD_DevConnect"/>
 		<item value="I2C1"/>
 		<item value="i2c1"/>
 		<item value="hi2c1"/>
-		<item value="printf"/>
 		<item value="error_position"/>
-		<item value="prev_time"/>
-		<item value="msg5"/>
-		<item value="count_limit"/>
-		<item value="led_diode"/>
-		<item value="cf_update_count"/>
-		<item value="last_print_time"/>
-		<item value="exponent"/>
 	</list>
 	<list key="replacehistory">
 		<item value="hi2c3"/>

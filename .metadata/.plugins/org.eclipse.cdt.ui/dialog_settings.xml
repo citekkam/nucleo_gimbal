@@ -38,4 +38,11 @@
 		<item key="size.width" value="497"/>
 		<item key="size.height" value="180"/>
 	</section>
+	<section name="CProjectWizard.dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="623"/>
+		<item key="DIALOG_Y_ORIGIN" value="350"/>
+		<item key="DIALOG_WIDTH" value="613"/>
+		<item key="DIALOG_HEIGHT" value="602"/>
+		<item key="DIALOG_FONT_NAME" value="1|Ubuntu Sans|11.0|0|GTK|1|"/>
+	</section>
 </section>

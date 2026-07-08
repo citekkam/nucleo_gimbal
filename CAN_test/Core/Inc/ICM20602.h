@@ -12,26 +12,35 @@
 extern "C" {
 #endif
 
-// ---- I2C address (AD0=0 -> 0x68, AD0=1 -> 0x69). HAL expects R/W-bit-shifted.
 #define ICM20602_ADDRESS   0x68
 
-// ---- Registers
-#define REG_SMPLRT_DIV      0x19
-#define REG_CONFIG          0x1A   // DLPF for gyro
-//#define REG_GYRO_CONFIG     0x1B   // FS_SEL
-//#define REG_ACCEL_CONFIG    0x1C
-#define REG_WHO_AM_I        0x75
-#define REG_GYRO_XOUT_H     0x43
 #define REG_SLEEP_PLL 		0x6B
-// ---- WHO_AM_I value for ICM-20602
-#define ICM20602_WHOAMI     0x12
 #define REG_CONFIG_GYRO 	0x1B
 #define REG_CONFIG_ACC 		0x1C
-#define REG_DATA_GYRO 		0x43
+#define REG_DATA_GYRO_Y		0x45
+#define REG_DATA_GYRO		0x43
 #define REG_DATA_ACC 		0x3B
 #define REG_DLPF 			0x1A
 #define REG_DLPF_ACC 		0x1D
 #define REG_SAMPLE_DIV 		0x19
+#define FIFO_OFF_REG		0x23
+#define FIFO_DENIED_REG		0x6A
+
+#define FS_GYRO_2000 	0x18
+#define FS_ACC_8G 		0x18
+#define WAKE_AND_PLL 	0x02
+#define BANDWIDTH 		0x00
+#define BANDWIDTH_ACC 	0x02
+#define FS500 			0x00 // pro 500Hz =1, pro 100Hz =9, pro 1kHz =0
+#define FIFO_OFF		0x00
+#define FIFO			0x00
+
+#define GYRO_SCALE      16.4f
+#define ACC_SCALE		2048.0f
+
+#define RAD2DEG 		57.295f
+#define DEG2RAD 		0.01745329251f
+#define alpha 			0.98f
 
 #define DIV_CON "CONNECTED\r\n"
 #define DIV_DISCON "CONNECTION ERROR\r\n"
@@ -48,47 +57,55 @@ extern "C" {
 #define ACC_CONFIG "ACC CONFIGURED\r\n"
 #define ACC_ERR "ACC ERROR\r\n"
 
-#define FS_GYRO_1000 	0x18 //0x10 for 1000
-#define FS_ACC_8G 		0x10
-#define WAKE_AND_PLL 	2
-#define BANDWIDTH 		1
-#define BANDWIDTH_ACC 	2
-#define FS500 			1
 
-// ---- Gyro FS options (FS_SEL bits 4:3)
-typedef enum { GFS_250=0, GFS_500=1, GFS_1000=2, GFS_2000=3 } icm_gyro_fs_t;
+#include <stdbool.h>
+#include <main.h>
 
 typedef struct{
-	int8_t angle;
+	float angle;
+	float gyro_integral_raw;
 }CompFilter;
 
+typedef struct {
+    volatile float acc_x;
+    volatile float acc_y;
+    volatile float acc_z;
+    volatile float gyro_x;
+    volatile float gyro_y;
+    volatile float gyro_z;
+    volatile float deg_XZ;
+} IMU_Data_t;
 
-// Return sensitivity (LSB per °/s) for chosen range
-static inline float icm20602_gyro_sens(icm_gyro_fs_t fs) {
-    switch (fs) {
-        case GFS_250:  return 131.0f;
-        case GFS_500:  return 65.5f;
-        case GFS_1000: return 32.8f;
-        default:       return 16.4f; // GFS_2000
-    }
-}
+typedef struct {
+    // Current Orientation (Quaternion)
+    float q[4];
 
+    // Gyro Bias Integrals
+    float integralFB[3];
 
+    // Tuning Parameters
+    float Kp;
+    float Ki;
+
+    // Output Euler Angles (Degrees)
+    volatile float roll;
+    volatile float pitch;
+    volatile float yaw;
+} Mahony_t;
+
+void IMU_Init_MF(Mahony_t *filter, float kp, float ki);
+void IMU_Update_MF(Mahony_t *filter, float gx, float gy, float gz, float ax, float ay, float az, float dt);
 void Read_Gyro();
 void Calibrate_GYRO();
 void Read_Data_ACC();
-void Combine_sensor();
 void CF_Init(CompFilter *filter, float angle_init);
-void CF_Update(CompFilter *filter, float gyro, float acc_angle);
-
-HAL_StatusTypeDef ICM20602_Init(uint8_t ad0,
-                                uint8_t dlpf_cfg,
-                                uint8_t smpl_div,
-                                icm_gyro_fs_t fs);
-HAL_StatusTypeDef ICM20602_ReadGyroRaw(uint8_t ad0, int16_t *gx, int16_t *gy, int16_t *gz);
-HAL_StatusTypeDef ICM20602_ReadGyroDPS(uint8_t ad0, icm_gyro_fs_t fs,
-                                       float *gx_dps, float *gy_dps, float *gz_dps);
+void CF_Update(CompFilter *filter, float gyro, float acc_angle, float dt);
+void ICM20602_Init();
+void I2C_Bus_Recover();
 void Print2Console(const char* msg1, const char* msg2, int ret);
+void Read_data();
+void I2C_WatchdogCheck();
+
 
 #ifdef __cplusplus
 }

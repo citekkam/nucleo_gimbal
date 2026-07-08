@@ -1,4 +1,5 @@
 // icm20602.c / .h  — minimal STM32 HAL snippet
+
 #include "main.h"
 #include <string.h>
 #include "ICM20602.h"
@@ -6,183 +7,252 @@
 #include <math.h>
 #include <stdio.h>
 
-extern I2C_HandleTypeDef hi2c1;
-extern UART_HandleTypeDef huart2;
+extern I2C_HandleTypeDef hi2c3;
 
-#define RAD2DEG 57.295
-#define alpha 0.95
-
-char msg[64];
-uint8_t data[6];
-int16_t offset_x = 0;
-int16_t offset_y = 0;
-int16_t offset_z = 0;
-float gyro_x;
-float gyro_y;
-float gyro_z;
-float deg_XZ;
+extern CompFilter filter;
+uint8_t data_acc[6];
+uint8_t data[14];
+float offset_x = 0;
+float offset_y = 0;
+float offset_z = 0;
+volatile float acc_x;
+volatile float acc_y;
+volatile float acc_z;
+volatile float gyro_x;
+volatile float gyro_y;
+volatile float gyro_z;
+volatile float deg_XZ;
+int16_t acc_x_raw;
+int16_t acc_y_raw;
+int16_t acc_z_raw;
+int16_t gyro_x_raw;
+int16_t gyro_y_raw;
+int16_t gyro_z_raw;
+uint8_t data_gyro[2];
+uint8_t data_gyro_MF[6];
+extern uint8_t dma_done;
+volatile uint8_t i2c_need_recovery = 0;
 uint32_t prev_time = 0;
-float degree;
+
+//IMU_Data_t Imu_Buff;
+
+volatile uint32_t dma_start_tick  = 0;
+volatile uint8_t  dma_in_progress = 0;
+#define I2C_DMA_TIMEOUT_MS  50
+
+#define I2C_DELAY_US(us) do { \
+    volatile uint32_t _c = (uint32_t)((us) * (SystemCoreClock / 1000000UL)); \
+    while (_c--); \
+} while(0)
 
 void Print2Console(const char* msg1, const char* msg2, int ret)
 {
-	if (ret == HAL_OK)
-	{
-		HAL_UART_Transmit(&huart2, (const uint8_t*)msg1, strlen(msg1),100);
+	if (ret == HAL_OK) {
+		//printf("%s",msg1);
 	}
-	else
-	{
-		HAL_UART_Transmit(&huart2, (const uint8_t*)msg2, strlen(msg2),100);
+	else {
+		//printf("%s",msg2);
 	}
-	//HAL_Delay(1000);
 }
 
 void Calibrate_GYRO()
 {
-	int16_t ret_count = 0;
-	int32_t gyro_x_cal = 0;
-	int32_t gyro_y_cal = 0;
-	int32_t gyro_z_cal = 0;
+	float gyro_x_cal = 0;
+	float gyro_y_cal = 0;
+	float gyro_z_cal = 0;
+
 	for (int i = 0; i < 1000; i++) {
-		HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(&hi2c1, (ICM20602_ADDRESS<<1) + 1, REG_DATA_GYRO, 1, data, 6, 100);
-		gyro_x_cal += (int16_t)((data[0] << 8) + data[1]);
-		gyro_y_cal += (int16_t)((data[2] << 8) + data[3]);
-		gyro_z_cal += (int16_t)((data[4] << 8) + data[5]);
-		if (ret == HAL_OK) {
-			ret_count++;
+		HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(&hi2c3, (ICM20602_ADDRESS<<1) + 1, REG_DATA_GYRO, 1, data_gyro_MF, 6, 100);
+		gyro_x_cal += (int16_t)((data_gyro_MF[0] << 8) | data_gyro_MF[1]);
+		gyro_y_cal += (int16_t)((data_gyro_MF[2] << 8) | data_gyro_MF[3]);
+		gyro_z_cal += (int16_t)((data_gyro_MF[4] << 8) | data_gyro_MF[5]);
+		if (ret != HAL_OK) {
+			HAL_I2C_DeInit(&hi2c3);
+			I2C_Bus_Recover();
+			HAL_I2C_Init(&hi2c3);
 		}
+		HAL_Delay(1);
 	}
-	offset_x = (int16_t)(gyro_x_cal / 1000);
-	offset_y = (int16_t)(gyro_y_cal / 1000);
-	offset_z = (int16_t)(gyro_z_cal / 1000);
+	offset_x = ((float)gyro_x_cal / 1000);
+	offset_y = ((float)gyro_y_cal / 1000);
+	offset_z = ((float)gyro_z_cal / 1000);
 
-
-	/*
-	printf("CALIBRACE\r\n");
-	 */
-	sprintf(msg, "%d from 1000, Y offset %d\r\n",ret_count, offset_y);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
+	//printf("OFFSET: %.5f\r\n",offset_y);
 }
 
-HAL_StatusTypeDef ICM20602_Init(uint8_t ad0,
-                                uint8_t dlpf_cfg,
-                                uint8_t smpl_div,
-                                icm_gyro_fs_t fs)
+void ICM20602_Init()
 {
-    HAL_StatusTypeDef st;
-    uint8_t v;
-
-    HAL_StatusTypeDef ret = HAL_I2C_IsDeviceReady(&hi2c1, (ICM20602_ADDRESS<<1), 1, 1000);
+    HAL_StatusTypeDef ret = HAL_I2C_IsDeviceReady(&hi2c3, (ICM20602_ADDRESS<<1), 1, 1000);
     Print2Console(DIV_CON, DIV_DISCON, ret);
-    //printf("DIV READY\r\n");
 
 
     uint8_t temp_data = WAKE_AND_PLL;
-	ret = HAL_I2C_Mem_Write(&hi2c1, (ICM20602_ADDRESS<<1) + 0, REG_SLEEP_PLL, 1, &temp_data, 1, 100);
+	ret = HAL_I2C_Mem_Write(&hi2c3, (ICM20602_ADDRESS<<1) + 0, REG_SLEEP_PLL, 1, &temp_data, 1, 100);
 	Print2Console(DIV_WAKE, DIV_SLEEP, ret);
-	//printf("WAKE\r\n");
 	HAL_Delay(500);
 
 
-	/*Set up the bandwidth on 176Hz, maybe later change on 92Hz*/
 	temp_data = BANDWIDTH;
-	ret = HAL_I2C_Mem_Write(&hi2c1, (ICM20602_ADDRESS<<1) + 0, REG_DLPF, 1, &temp_data, 1, 100);
+	ret = HAL_I2C_Mem_Write(&hi2c3, (ICM20602_ADDRESS<<1) + 0, REG_DLPF, 1, &temp_data, 1, 100);
 	Print2Console(DLPF_SET, DLPF_ERR, ret);
-	//printf("FILTER\r\n");
+
 
 	temp_data = BANDWIDTH_ACC;
-	ret = HAL_I2C_Mem_Write(&hi2c1, (ICM20602_ADDRESS<<1) + 0, REG_DLPF_ACC, 1, &temp_data, 1, 100);
+	ret = HAL_I2C_Mem_Write(&hi2c3, (ICM20602_ADDRESS<<1) + 0, REG_DLPF_ACC, 1, &temp_data, 1, 100);
 	Print2Console(DLPF_SET_ACC, DLPF_ERR_ACC, ret);
-	//printf("FILTER ACC\r\n");
 
 
-	/*Set up Sample rate for now it is 500Hz*/
 	temp_data = FS500;
-	ret = HAL_I2C_Mem_Write(&hi2c1, (ICM20602_ADDRESS<<1) + 0, REG_SAMPLE_DIV, 1, &temp_data, 1, 100);
+	ret = HAL_I2C_Mem_Write(&hi2c3, (ICM20602_ADDRESS<<1) + 0, REG_SAMPLE_DIV, 1, &temp_data, 1, 100);
 	Print2Console(SR_SET, SR_ERR, ret);
-	//printf("SMP RATE\r\n");
 
-	/*Gyroscope configuration*/
-	temp_data = FS_GYRO_1000;
-	ret = HAL_I2C_Mem_Write(&hi2c1, (ICM20602_ADDRESS<<1) + 0, REG_CONFIG_GYRO, 1, &temp_data, 1, 100);
+
+	temp_data = FS_GYRO_2000;
+	ret = HAL_I2C_Mem_Write(&hi2c3, (ICM20602_ADDRESS<<1) + 0, REG_CONFIG_GYRO, 1, &temp_data, 1, 100);
 	Print2Console(GYRO_CONFIG, GYRO_ERR, ret);
-	//printf("GYRO\r\n");
+
 
 	temp_data = FS_ACC_8G;
-	ret = HAL_I2C_Mem_Write(&hi2c1, (ICM20602_ADDRESS<<1) + 0, REG_CONFIG_ACC, 1, &temp_data, 1, 100);
+	ret = HAL_I2C_Mem_Write(&hi2c3, (ICM20602_ADDRESS<<1) + 0, REG_CONFIG_ACC, 1, &temp_data, 1, 100);
 	Print2Console(ACC_CONFIG, ACC_ERR, ret);
-	//printf("ACC\r\n");
 
 
-	/*Count offset of gyroscope*/
+	temp_data = FIFO_OFF;
+	ret = HAL_I2C_Mem_Write(&hi2c3, (ICM20602_ADDRESS<<1) + 0, FIFO_OFF_REG, 1, &temp_data, 1, 100);
+
+	temp_data = FIFO;
+	ret = HAL_I2C_Mem_Write(&hi2c3, (ICM20602_ADDRESS<<1) + 0, FIFO_DENIED_REG, 1, &temp_data, 1, 100);
+
 	Calibrate_GYRO();
 }
 
-extern int iic_err;
-int16_t count_limit = 0;
-void Read_Gyro() {
-	int16_t gyro_x_raw, gyro_y_raw, gyro_z_raw;
-	HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(&hi2c1, (ICM20602_ADDRESS<<1) + 1, REG_DATA_GYRO, 1, data, 6, 100);
-	if (ret != HAL_OK) {
-		iic_err += 1;
-	}
-	gyro_x_raw = (int16_t)((data[0] << 8) + data[1]);
-	gyro_y_raw = (int16_t)((data[2] << 8) + data[3]);
-	gyro_z_raw = (int16_t)((data[4] << 8) + data[5]);
-	gyro_x_raw -= offset_x;
-	gyro_y_raw -= offset_y;
-	gyro_z_raw -= offset_z;
-	gyro_x = ((float)gyro_x_raw/16.4);
-	gyro_y = ((float)gyro_y_raw/16.4);
-	gyro_z = ((float)gyro_z_raw/16.4);
-	if (gyro_y > 1990)  {
-		count_limit++;
-	}
-	/*
-	sprintf(msg, "%d %d %d\r\n", (int)gyro_x, (int)gyro_y, (int)gyro_z);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
-	 *
-	 */
+void I2C_Bus_Recover() {
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    GPIO_InitStruct.Pin = GPIO_PIN_8;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    for (int i = 0; i < 9; i++) {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+        for(volatile int i=0; i<2000; i++);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+        for(volatile int i=0; i<2000; i++);
+
+        if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_9) == GPIO_PIN_SET) {
+            break;
+        }
+    }
+
+
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+    GPIO_InitStruct.Pin = GPIO_PIN_9;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+    for(volatile int i=0; i<2000; i++);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+    for(volatile int i=0; i<2000; i++);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+    for(volatile int i=0; i<2000; i++);
 }
 
-void Read_Data_ACC()
+
+void I2C_WatchdogCheck()
 {
-	int16_t acc_x_raw, acc_y_raw, acc_z_raw;
- 	float acc_x, acc_y, acc_z, rad_XZ;
- 	HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(&hi2c1, (ICM20602_ADDRESS<<1) + 1, REG_DATA_ACC, 1, data, 6, 100);
-	if (ret != HAL_OK) {
-		iic_err += 1;
-	}
-	acc_x_raw = (int16_t)((data[0] << 8) + data[1]);
-	acc_y_raw = (int16_t)((data[2] << 8) + data[3]);
-	acc_z_raw = (int16_t)((data[4] << 8) + data[5]);
-	acc_x = ((float)acc_x_raw /4096.0);
-	acc_y = ((float)acc_y_raw /4096.0);
-	acc_z = ((float)acc_z_raw /4096.0);
-	rad_XZ  = (atan2f(acc_x, acc_z));
-	//rad_XZ = atan2f(-acc_x, sqrt(acc_y*acc_y + acc_z*acc_z));
-	deg_XZ = (rad_XZ*RAD2DEG);
+    // Timeout check -- catches silent hangs (SDA stuck low, clock stretching forever)
+    if (dma_in_progress &&
+       (HAL_GetTick() - dma_start_tick) > I2C_DMA_TIMEOUT_MS)
+    {
+        dma_in_progress   = 0;
+        i2c_need_recovery = 1;
+    }
 
-	/*
-	 *
-	sprintf(msg, "%d\r\n", iic_err);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
-	 */
+    // Actual recovery -- safe here because we are in main (non-ISR) context
+    if (i2c_need_recovery) {
+        i2c_need_recovery = 0;
+
+        if (hi2c3.hdmarx != NULL) HAL_DMA_Abort(hi2c3.hdmarx);
+        HAL_I2C_DeInit(&hi2c3);
+        I2C_Bus_Recover();
+        HAL_I2C_Init(&hi2c3);
+
+        Read_data();
+    }
 }
 
-/*CF = Complementary Filter*/
+void Read_data()
+{
+    dma_start_tick  = HAL_GetTick();
+    dma_in_progress = 1;
+	HAL_I2C_Mem_Read_DMA(&hi2c3, (ICM20602_ADDRESS<<1), REG_DATA_ACC, 1, data, 14);
+
+}
+
+void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
+
+{
+	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+	if(hi2c->Instance == I2C3) {
+	        dma_in_progress = 0;
+
+	        acc_x_raw = (int16_t)((data[0] << 8) + data[1]);
+	        acc_y_raw = (int16_t)((data[2] << 8) + data[3]);
+	        acc_z_raw = (int16_t)((data[4] << 8) + data[5]);
+
+	        gyro_x_raw = (int16_t)((data[8] << 8)  | data[9]);
+	        gyro_y_raw = (int16_t)((data[10] << 8) | data[11]);
+	        gyro_z_raw = (int16_t)((data[12] << 8) | data[13]);
+
+	        acc_x = (float)acc_x_raw / ACC_SCALE;
+	        acc_y = (float)acc_y_raw / ACC_SCALE;
+	        acc_z = (float)acc_z_raw / ACC_SCALE;
+
+	        float rad_XZ = atan2f(acc_x, acc_z);
+	        deg_XZ = rad_XZ * RAD2DEG;
+
+	        gyro_x = (((float)gyro_x_raw - offset_x) / GYRO_SCALE);
+	        gyro_y = (((float)gyro_y_raw - offset_y) / GYRO_SCALE);
+	        gyro_z = (((float)gyro_z_raw - offset_z) / GYRO_SCALE);
+
+	        //printf("%f \r\n", gyro_y);
+	        //printf("%d \r\n", gyro_y_raw);
+
+			dma_done = 1;
+	    }
+}
+
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
+{
+	if (hi2c->Instance == I2C3) {
+	        dma_in_progress   = 0;
+	        i2c_need_recovery = 1;
+	    }
+}
+
+
+
 void CF_Init(CompFilter *filter, float angle_init) {
 	filter->angle = angle_init;
 }
 
-void CF_Update(CompFilter *filter, float gyro, float acc_angle) {
-	float now = HAL_GetTick();
-	float dt = ((now - prev_time) / 1000.0); // 0.002
+void CF_Update(CompFilter *filter, float gyro, float acc_angle, float dt) {
+	//float now = HAL_GetTick();
+	//float dt = ((now - prev_time) / 1000.0); // 0.002
 	//float dt = 0.002;
-	prev_time = now;
+	//prev_time = now;
 
 	//filter->angle = filter->angle + gyro * dt;
-	float gyro_angle = filter->angle + gyro * dt;
+	float gyro_angle = filter->angle - gyro * dt;
 
 	filter->angle = alpha * gyro_angle + (1.0 - alpha) * acc_angle;
 }

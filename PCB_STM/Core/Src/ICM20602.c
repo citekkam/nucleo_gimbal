@@ -120,35 +120,29 @@ void ICM20602_Init()
 void I2C_Bus_Recover() {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-    // 1. Konfigurace SCL jako GPIO Output (Open-Drain)
-    // Uprav piny podle tvého Nuclea (např. PB6 pro SCL na I2C1)
     GPIO_InitStruct.Pin = GPIO_PIN_8;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    // Konfigurace SDA jako GPIO Input (abychom viděli, kdy se uvolní)
     GPIO_InitStruct.Pin = GPIO_PIN_9;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    // 2. Poslat 9 pulsů na SCL
     for (int i = 0; i < 9; i++) {
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
         for(volatile int i=0; i<2000; i++);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
         for(volatile int i=0; i<2000; i++);
 
-        // Pokud SDA naskočí do 1, senzor už linku pustil
         if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_9) == GPIO_PIN_SET) {
             break;
         }
     }
 
-    // 3. Manuální STOP podmínka
-    // SDA jde z 0 na 1, zatímco SCL je 1
+
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
     GPIO_InitStruct.Pin = GPIO_PIN_9;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
@@ -160,8 +154,6 @@ void I2C_Bus_Recover() {
     for(volatile int i=0; i<2000; i++);
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
     for(volatile int i=0; i<2000; i++);
-
-    // 4. Vrátit piny zpět do I2C režimu (to udělá HAL_I2C_Init)
 }
 
 
@@ -184,46 +176,8 @@ void I2C_WatchdogCheck()
         I2C_Bus_Recover();
         HAL_I2C_Init(&hi2c3);
 
-        Read_data();    // restart the continuous DMA chain
+        Read_data();
     }
-}
-
-
-void Read_Gyro() {
-	HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(&hi2c3, (ICM20602_ADDRESS<<1), REG_DATA_GYRO_Y, 1, data_gyro, 2,100);
-	if (ret != HAL_OK) {
-		HAL_I2C_DeInit(&hi2c3);
-		I2C_Bus_Recover();
-		HAL_I2C_Init(&hi2c3);
-	}
-
-		gyro_y_raw = (int16_t)((data_gyro[0] << 8) | data_gyro[1]);
-		gyro_y_raw -= offset_y;
-		gyro_y = ((float)gyro_y_raw/GYRO_SCALE);
-}
-
-void Read_Data_ACC()
-{
-	int16_t acc_x_raw, acc_y_raw, acc_z_raw;
- 	float acc_x, acc_y, acc_z, rad_XZ;
-
- 	HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(&hi2c3, (ICM20602_ADDRESS<<1), REG_DATA_ACC, 1, data_acc, 6,100);
-	if (ret != HAL_OK) {
-		HAL_I2C_DeInit(&hi2c3);
-		I2C_Bus_Recover();
-		HAL_I2C_Init(&hi2c3);
-	}
-
-		acc_x_raw = (int16_t)((data_acc[0] << 8) + data_acc[1]);
-		acc_y_raw = (int16_t)((data_acc[2] << 8) + data_acc[3]);
-		acc_z_raw = (int16_t)((data_acc[4] << 8) + data_acc[5]);
-		acc_x = ((float)acc_x_raw /ACC_SCALE);
-		acc_y = ((float)acc_y_raw /ACC_SCALE);
-		acc_z = ((float)acc_z_raw /ACC_SCALE);
-		rad_XZ = atan2f(acc_x, acc_z);
-		//rad_XZ = atan2f(-acc_x, sqrt(acc_y*acc_y + acc_z*acc_z));
-		deg_XZ = (rad_XZ*RAD2DEG);
-
 }
 
 void Read_data()
@@ -237,8 +191,8 @@ void Read_data()
 void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 
 {
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
     if(hi2c->Instance == I2C3) {
     	dma_in_progress = 0;
 
@@ -251,7 +205,6 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 		acc_y = ((float)acc_y_raw /ACC_SCALE);
 		acc_z = ((float)acc_z_raw /ACC_SCALE);
 		rad_XZ = atan2f(acc_x, acc_z);
-		//rad_XZ = atan2f(acc_x, sqrt(acc_y*acc_y + acc_z*acc_z));
 		deg_XZ = (rad_XZ*RAD2DEG);
 
 		gyro_x_raw = (int16_t)((data[8] << 8) | data[9]);
@@ -268,15 +221,15 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 
         //send_imu_raw(57,acc_x_raw,acc_y_raw,acc_z_raw, gyro_x_raw,gyro_y_raw,gyro_z_raw);
 
-        Read_data();
+        //Read_data();
     }
 }
 
 void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 {
 	if (hi2c->Instance == I2C3) {
-	        dma_in_progress   = 0;   // stop watchdog counting (recovery handles restart)
-	        i2c_need_recovery = 1;   // defer actual recovery to main-loop context
+	        dma_in_progress   = 0;
+	        i2c_need_recovery = 1;
 	    }
 }
 
@@ -291,23 +244,16 @@ void IMU_Update_MF(Mahony_t *filter, float gx, float gy, float gz, float ax, flo
     float recipNorm;
     float v[3], e[3];
 
-    // 1. Výpočet normy akcelerometru (celkové G-síly)
+    // Výpočet normy akcelerometru (celkové G-síly)
     float norm = sqrtf(ax*ax + ay*ay + az*az);
 
-    // --- DYNAMICKÉ LADĚNÍ KP (Adaptive Gain) ---
     float actual_Kp = filter->Kp;
-
-    // Odchylka od 1G (klidový stav)
     float error_g = fabsf(norm - 1.0f);
 
     if (error_g > 0.05f) {
-        // Pokud dron prudce zrychluje nebo zatáčí (norma != 1G),
-        // snížíme váhu akcelerometru. Čím větší chyba, tím menší Kp.
         actual_Kp /= (1.0f + (error_g * 20.0f));
     }
 
-    // High-Speed Rejection: Pokud dron rotuje velmi rychle (> 100°/s),
-    // akcelerometr je nepoužitelný kvůli odstředivým silám.
     float gyro_mag = sqrtf(gx*gx + gy*gy + gz*gz);
     if (gyro_mag > 3.49f) {
         actual_Kp *= 0.0f;
@@ -315,12 +261,12 @@ void IMU_Update_MF(Mahony_t *filter, float gx, float gy, float gz, float ax, flo
         actual_Kp *= 0.05f;
     }
 
-    // 2. Korekce pomocí akcelerometru (pouze pokud senzor není ve volném pádu)
+    // Korekce pomocí akcelerometru (pouze pokud senzor není ve volném pádu)
     if (norm > 0.1f) {
         recipNorm = 1.0f / norm;
         ax *= recipNorm; ay *= recipNorm; az *= recipNorm;
 
-        // Odhad směru gravitace (vektor v) z aktuálního stavu quaternionu
+        // Odhad směru gravitace z aktuálního stavu quaternionu
         v[0] = 2.0f * (filter->q[1] * filter->q[3] - filter->q[0] * filter->q[2]);
         v[1] = 2.0f * (filter->q[0] * filter->q[1] + filter->q[2] * filter->q[3]);
         v[2] = filter->q[0]*filter->q[0] - filter->q[1]*filter->q[1]
@@ -342,7 +288,7 @@ void IMU_Update_MF(Mahony_t *filter, float gx, float gy, float gz, float ax, flo
         gz += actual_Kp * e[2] + filter->integralFB[2];
     }
 
-    // 3. Integrace Quaternionu (časový krok integrace orientace)
+    // Integrace Quaternionu
     float q0 = filter->q[0], q1 = filter->q[1], q2 = filter->q[2], q3 = filter->q[3];
 
     filter->q[0] += 0.5f * dt * (-q1 * gx - q2 * gy - q3 * gz);
@@ -358,7 +304,7 @@ void IMU_Update_MF(Mahony_t *filter, float gx, float gy, float gz, float ax, flo
     filter->q[2] *= recipNorm;
     filter->q[3] *= recipNorm;
 
-    // 4. Výpočet Eulerových úhlů (Roll, Pitch, Yaw)
+    // Výpočet Eulerových úhlů
     // ROLL (otočení kolem osy X)
     filter->roll = atan2f(2.0f * (filter->q[0] * filter->q[1] + filter->q[2] * filter->q[3]),
                           1.0f - 2.0f * (filter->q[1] * filter->q[1] + filter->q[2] * filter->q[2])) * RAD2DEG;
@@ -366,28 +312,11 @@ void IMU_Update_MF(Mahony_t *filter, float gx, float gy, float gz, float ax, flo
     // PITCH (naklonění nahoru/dolů kolem osy Y)
     float sinp = 2.0f * (filter->q[0] * filter->q[2] - filter->q[3] * filter->q[1]);
     if (fabsf(sinp) >= 1.0f)
-        filter->pitch = copysignf(1.570796f, sinp) * RAD2DEG; // Ošetření mezních stavů 90°
+        filter->pitch = copysignf(1.570796f, sinp) * RAD2DEG;
     else
         filter->pitch = asinf(sinp) * RAD2DEG;
 
     // YAW (otáčení do stran kolem osy Z)
     filter->yaw = atan2f(2.0f * (filter->q[0] * filter->q[3] + filter->q[1] * filter->q[2]),
                          1.0f - 2.0f * (filter->q[2] * filter->q[2] + filter->q[3] * filter->q[3])) * RAD2DEG;
-}
-
-
-void CF_Init(CompFilter *filter, float angle_init)
-{
-	filter->angle = angle_init;
-}
-
-void CF_Update(CompFilter *filter, float gyro, float acc_angle, float dt)
-{
-	float gyro_angle = filter->angle - gyro * dt;
-
-	//filter->angle = filter->angle - gyro * dt;
-	filter->gyro_integral_raw = gyro_angle;
-
-	filter->angle = alpha * gyro_angle + (1.0 - alpha) * acc_angle;
-
 }
