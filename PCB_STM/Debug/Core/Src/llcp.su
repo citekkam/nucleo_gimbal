@@ -1,6 +1,6 @@
 ../Core/Src/llcp.c:31:6:send_heartbeat	16	static
 ../Core/Src/llcp.c:48:6:send_imu	24	static
-../Core/Src/llcp.c:64:6:send_imu_raw	40	static
-../Core/Src/llcp.c:84:6:send_plot_data	40	static
-../Core/Src/llcp.c:102:6:send_ACK	152	static
-../Core/Src/llcp.c:128:6:receive_message	32	static
+../Core/Src/llcp.c:63:6:send_imu_raw	40	static
+../Core/Src/llcp.c:83:6:send_plot_data	40	static
+../Core/Src/llcp.c:101:6:send_ACK	152	static
+../Core/Src/llcp.c:127:6:receive_message	32	static

@@ -254,5 +254,5 @@ void CF_Update(CompFilter *filter, float gyro, float acc_angle, float dt) {
 	//filter->angle = filter->angle + gyro * dt;
 	float gyro_angle = filter->angle - gyro * dt;
 
-	filter->angle = alpha * gyro_angle + (1.0 - alpha) * acc_angle;
+	filter->angle = alpha_komp_filter * gyro_angle + (1.0 - alpha_komp_filter) * acc_angle;
 }

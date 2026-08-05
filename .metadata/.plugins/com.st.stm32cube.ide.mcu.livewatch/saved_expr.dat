@@ -5,3 +5,9 @@ value
 feedback
 odrv_user_data
 odrv0_user_data.last_feedback.Pos_Estimate
+required_torque
+torque_filtered
+feedback.Pos_Estimate
+Kp
+Kd
+myIMU.pitch

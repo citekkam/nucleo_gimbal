@@ -320,3 +320,20 @@ void IMU_Update_MF(Mahony_t *filter, float gx, float gy, float gz, float ax, flo
     filter->yaw = atan2f(2.0f * (filter->q[0] * filter->q[3] + filter->q[1] * filter->q[2]),
                          1.0f - 2.0f * (filter->q[2] * filter->q[2] + filter->q[3] * filter->q[3])) * RAD2DEG;
 }
+
+void CF_Init(CompFilter *filter, float angle_init) {
+	filter->angle = angle_init;
+}
+
+void CF_Update(CompFilter *filter, float gyro, float acc_angle, float dt) {
+	//float now = HAL_GetTick();
+	//float dt = ((now - prev_time) / 1000.0); // 0.002
+	//float dt = 0.002;
+	//prev_time = now;
+
+	//filter->angle = filter->angle + gyro * dt;
+	float gyro_angle = filter->angle - gyro * dt;
+
+	filter->angle = alpha_komp_filter * gyro_angle + (1.0 - alpha_komp_filter) * acc_angle;
+}
+

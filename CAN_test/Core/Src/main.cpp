@@ -103,6 +103,18 @@ float test_angle_gyro = 0;
 extern volatile uint8_t  dma_in_progress;
 extern volatile uint8_t i2c_need_recovery;
 
+
+volatile float Kp = 0.0f;  //0.00005f Tah k horizontu (Začněte od nuly a ladit!)
+volatile float Ki = 0.0f;  // Vyrovnání trvalé chyby
+volatile float Kd = 0.0f; //0.0001 Tlumení vibrací (Začněte ladit tímto!)
+
+float integral_error = 0.0f;
+float max_torque = 0.3f;   // Limit momentu v Nm
+float required_torque;
+float target_angle = 0.0f;
+static float torque_filtered = 0;
+static float smoothed_velocity = 0.0f;
+
 Get_Encoder_Estimates_msg_t feedback;
 //-------------------------------------------ICM---------------------------------
 
@@ -120,7 +132,13 @@ ODriveUserData odrv0_user_data;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
+#ifdef __cplusplus
+extern "C" {
+#endif
 void SystemClock_Config(void);
+#ifdef __cplusplus
+}
+#endif
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
@@ -262,6 +280,7 @@ if (HAL_CAN_Start(&hcan1) != HAL_OK) {
 Error_Handler();
 
 }
+/*
 
 // --- Wait for ODrive ---
 
@@ -283,7 +302,6 @@ HAL_Delay(100); // Wait 100ms
 
 //printf("Attempting to read bus voltage and current...\r\n");
 
-/*
  *
 Get_Bus_Voltage_Current_msg_t vbus;
 
@@ -295,7 +313,7 @@ Error_Handler();
 
 }
 
- */
+odrv0.setControllerMode(3, 1);
 
 // --- Set Closed Loop Control ---
 
@@ -321,6 +339,7 @@ pumpEvents(can_intf); // Keep checking for heartbeats
 }
 
 }
+ */
 
 
 //printf("ODrive running!\r\n");
@@ -334,6 +353,10 @@ pumpEvents(can_intf); // Keep checking for heartbeats
   LL_TIM_EnableCounter(TIM11);
 
   Read_data();
+
+
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -350,9 +373,8 @@ while (1)
 	        I2C_WatchdogCheck();
 
 			pumpEvents(can_intf);
-	/*
-	 *
 
+	/*
 
 float SINE_PERIOD = 2.0f; // Period in seconds
 
@@ -422,7 +444,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_SYSCLK, RCC_MCODIV_4);
+  HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_HSE, RCC_MCODIV_1);
 }
 
 /**
@@ -723,11 +745,6 @@ static void MX_GPIO_Init(void)
 extern "C" {
 #endif
 
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
-{
-	pumpEvents(can_intf);
-}
-
 int __io_putchar(int ch) {
     // Wait until TXE flag is set (Transmit Data Register Empty)
     while (!LL_USART_IsActiveFlag_TXE(USART2));
@@ -754,40 +771,120 @@ int _write(int file, char *ptr, int len) {
 void Timer_callback()
 {
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+
+	/*
+	 *
+	while (HAL_CAN_GetRxFifoFillLevel(&hcan1, CAN_RX_FIFO0) > 0) {
+		pumpEvents(can_intf);
+	}
+	 */
+
 	if (dma_done == 1) {
 
-		test_angle_gyro += gyro_y * 0.001;
+		//test_angle_gyro += gyro_y * 0.001;
 
 		static uint16_t previous_tick = 0;
 		uint16_t current_tick = LL_TIM_GetCounter(TIM11);
 		uint16_t dt_tick = current_tick - previous_tick;
-		static float dt_float = (float)dt_tick * 0.0001f;
+		float dt_float = (float)dt_tick * 0.0001f;
 		previous_tick = current_tick;
 
 		CF_Update(&filter, gyro_y, deg_XZ, dt_float);
 
 
-		feedback = odrv0_user_data.last_feedback;
+
+		//feedback = odrv0_user_data.last_feedback;
+
+		float current_angle_turns = filter.angle / 360.0f;
+
+		// 2. Výpočet cílové pozice motoru (stejné jako předtím)
+		//motor_position = feedback.Pos_Estimate - ((-reference_angle/360.0f) - current_angle_turns);
+
+		//Pro PCB
+		//motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f) - current_angle_turns);
+
+		static float prev_imu_turns = 0.0f;
+		float raw_velocity = (current_angle_turns - prev_imu_turns) / dt_float;
+		prev_imu_turns = current_angle_turns;
+
+		// 3. Silný Low-Pass filtr pro vyhlazení rychlosti
+		// Hodnota 0.1 znamená, že bereme 90% staré rychlosti a 10% nové.
+		// Pokud motor stále vibruje, zmenši číslo (např. na 0.05 nebo 0.02).
+		float alpha_vel = 0.0002f;
+		smoothed_velocity = (smoothed_velocity * (1.0f - alpha_vel)) + (raw_velocity * alpha_vel);
+
+		//motor_position = feedback.Pos_Estimate - ((-reference_angle/360.0f)-(filter.angle/360.0f));
+		if (motor_position >= -0.25 && motor_position <=0.25) {
+			//odrv0.setPosition(motor_position, smoothed_velocity, 0.0);
+
+			//odrv0.setPosition(motor_position, 0.0, 0.0);
+		}
 
 		/*
-		error_position = (-reference_angle/360.0f)-(myIMU.pitch/360.0f);
-		if (error_position <= -0.055f) {
-		  error_position = -0.055;
-		} else if (error_position >= 0.055f) {
-		  error_position = 0.055;
-		} else {
-		}
-		motor_position = feedback.Pos_Estimate + error_position;
-		 */
-		//motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f));
-		motor_position = feedback.Pos_Estimate - ((-reference_angle/360.0f)-(filter.angle/360.0f));
-		if (motor_position >= -0.25 && motor_position <=0.25) {
-			odrv0.setPosition(motor_position, 0.0, 0.0);
-		}
-
 		printf("%.3f,%.3f\r\n",
 		               filter.angle,
 		               feedback.Pos_Estimate);
+		 */
+
+/*
+		// Získání absolutního úhlu kamery z filtru
+		float current_camera_angle = filter.angle;
+
+
+		// Výpočet chyby
+		//float error = target_angle - current_camera_angle;
+		float error = current_camera_angle - target_angle;
+
+		// Integrační složka (Anti-Windup)
+		integral_error += error * 0.001f;
+		if (integral_error > 2.0f) integral_error = 2.0f;
+		if (integral_error < -2.0f) integral_error = -2.0f;
+
+
+		// Derivační složka = Surová filtrovaná rychlost přímo z Gyroskopu
+		static float filtered_gyro = 0.0f;
+		float alpha = 0.1f; // Hodnota 0.01 až 1.0. Čím menší, tím hladší (ale pomalejší)
+		filtered_gyro = (filtered_gyro * (1.0f - alpha)) + (gyro_y * alpha);
+
+		float camera_angular_velocity = filtered_gyro;
+
+
+
+		// VÝPOČET MOMENTU PRO MOTOR (Torque v Nm)
+		required_torque = (Kp * error) + (Ki * integral_error) - (Kd * camera_angular_velocity);
+		//required_torque = (Kp * error) + (Ki * integral_error) + (Kd * camera_angular_velocity);
+
+
+ //--------------------------------------------------------------------------
+		float test_frequency = 5.0f; // Frekvence 5 Hz
+		float test_amplitude = 0.1f; // Bezpečná amplituda 0.2 Nm
+
+		// Získání času v sekundách z HAL_GetTick()
+		float time_sec = HAL_GetTick() * 0.001f;
+
+		// Výpočet sinusového momentu
+		required_torque = test_amplitude * sin(TWO_PI * test_frequency * time_sec);
+ //--------------------------------------------------------------------------
+
+
+		// Ořezání na bezpečnostní limity
+		if (required_torque > max_torque) required_torque = max_torque;
+		if (required_torque < -max_torque) required_torque = -max_torque;
+
+		// ---------------------------------------------------------
+		// 3. ODESLÁNÍ DO ODRIVE (BEZ BLOKOVÁNÍ)
+		// ---------------------------------------------------------
+
+		if (feedback.Pos_Estimate >= -0.25 && feedback.Pos_Estimate <=0.25) {
+			torque_filtered = 0.9f * torque_filtered + 0.1f * required_torque;
+			odrv0.setTorque(torque_filtered);
+
+
+			//odrv0.setTorque(required_torque);
+		} else {
+			odrv0.setTorque(0.0f);
+		}
+ */
 
 		dma_done = 0;
 

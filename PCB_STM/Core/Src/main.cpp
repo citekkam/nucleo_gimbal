@@ -209,9 +209,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  //ICM20602_Init();
-  //Read_data();
-  IMU_Init_MF(&myIMU, 0.4f, 0.0001f);
+  ICM20602_Init();
+
+  // Mahony filter
+  //IMU_Init_MF(&myIMU, 0.4f, 0.0001f);
+
+  // Complementary filter
+  CF_Init(&filter, 0);
 
   odrv0.onFeedback(onFeedback, &odrv0_user_data);
   odrv0.onStatus(onHeartbeat, &odrv0_user_data);
@@ -261,6 +265,9 @@ int main(void)
 
   //printf("ODrive Wait \r\n");
 
+  /*
+   *
+   */
   while (!odrv0_user_data.received_heartbeat) {
 	pumpEvents(can_intf); // Check for messages
 	HAL_Delay(100); // Wait 100ms
@@ -382,7 +389,12 @@ int main(void)
 		  float dt_float = (float)dt_tick*0.0001;
 		  previous_tick = current_tick;
 
-		  IMU_Update_MF(&myIMU, gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, dt_float);
+		  // Mahony filter
+		  //IMU_Update_MF(&myIMU, gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, dt_float);
+
+		  // Complementary filter
+		  CF_Update(&filter, gyro_y, deg_XZ, dt_float);
+
 		  send_pos = 1;
 
 	  }
@@ -392,25 +404,29 @@ int main(void)
 
 		  send_pos = 0;
 		  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
+		  // Mahony  filter
+		  //error_position = (-reference_angle/360.0f)-(myIMU.pitch/360.0f);
 
-		  error_position = (-reference_angle/360.0f)-(myIMU.pitch/360.0f);
+		  // Complementary filter
+		  error_position = (-reference_angle/360.0f)-(filter.angle/360.0f);
+
 		  if (error_position <= -0.055f) {
 			  error_position = -0.055;
 		  } else if (error_position >= 0.055f) {
 			  error_position = 0.055;
 		  } else {
 		  }
-		  motor_position = feedback.Pos_Estimate + error_position;
+		  // Mahony filter
+		  //motor_position = feedback.Pos_Estimate + error_position;
+
+		  // Complementary filter
+		  motor_position = feedback.Pos_Estimate - error_position;
+
 		  //motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f));
 		  if (motor_position >= -0.25 && motor_position <=0.25) {
-			//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
-			//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 			odrv0.setPosition(motor_position, 0.0, 0.0);
 		  }
 
-		  //send_plot_data(57,(int16_t)(feedback.Pos_Estimate*10000.0f), (int16_t)(myIMU.pitch*100.0f), (int16_t)reference_angle);
-
-		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 	  }
 
   }
@@ -440,7 +456,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 8;
   RCC_OscInitStruct.PLL.PLLN = 168;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -454,14 +470,13 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
     Error_Handler();
   }
-  HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_HSE, RCC_MCODIV_2);
 }
 
 /**
@@ -718,14 +733,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PC9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
   /* USER CODE END MX_GPIO_Init_2 */
@@ -744,7 +751,11 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 void feedback_callback()
 {
 	if (send_data) {
-		send_imu(57, myIMU.pitch,0);
+		// Mahony filter
+		//send_imu(57, (int16_t)(myIMU.pitch*100.0f));
+
+		// Complementary filter
+		send_imu(57, (int16_t)(filter.angle*100.0f));
 	}
 }
 

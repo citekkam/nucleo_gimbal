@@ -34,6 +34,7 @@ extern "C" {
 #define RAD2DEG 		57.295f
 #define DEG2RAD 		0.01745329251f
 #define alpha 			0.98f
+#define alpha_komp_filter 			0.98f
 
 #define DIV_CON "CONNECTED\r\n"
 #define DIV_DISCON "CONNECTION ERROR\r\n"
@@ -55,7 +56,7 @@ extern "C" {
 #include <main.h>
 
 typedef struct{
-	float angle;
+	volatile float angle;
 	float gyro_integral_raw;
 }CompFilter;
 
@@ -82,7 +83,7 @@ void Read_Gyro();
 void Calibrate_GYRO();
 void Read_Data_ACC();
 void CF_Init(CompFilter *filter, float angle_init);
-void CF_Update(CompFilter *filter, float gyro, float acc_angle, float start);
+void CF_Update(CompFilter *filter, float gyro, float acc_angle, float dt);
 void ICM20602_Init();
 void I2C_Bus_Recover();
 void Print2Console(const char* msg1, const char* msg2, int ret);

@@ -25,22 +25,21 @@
 ../Core/Inc/ODrive_CubeIDE_glue.h:24:1:static void wrap_can_intf(CubeCANInterface&)::<lambda(void*)>::_FUN(void*)	1
 ../Core/Inc/ODrive_CubeIDE_glue.h:24:1:wrap_can_intf(CubeCANInterface&)::<lambda(void*)>::operator void (*)(void*)() const	1
 ../Core/Inc/ODrive_CubeIDE_glue.h:24:1:ODriveCanIntfWrapper wrap_can_intf(CubeCANInterface&)	1
-../Core/Src/main.cpp:135:6:void onHeartbeat(Heartbeat_msg_t&, void*)	1
-../Core/Src/main.cpp:148:6:void onFeedback(Get_Encoder_Estimates_msg_t&, void*)	1
-../Core/Src/main.cpp:171:5:int main()	6
-../Core/Src/main.cpp:385:6:void SystemClock_Config()	3
-../Core/Src/main.cpp:433:13:void MX_CAN1_Init()	2
-../Core/Src/main.cpp:470:13:void MX_I2C3_Init()	2
-../Core/Src/main.cpp:504:13:void MX_TIM10_Init()	1
-../Core/Src/main.cpp:540:13:void MX_TIM11_Init()	1
-../Core/Src/main.cpp:572:13:void MX_USART2_UART_Init()	1
-../Core/Src/main.cpp:626:13:void MX_USB_OTG_FS_PCD_Init()	2
-../Core/Src/main.cpp:659:13:void MX_DMA_Init()	1
-../Core/Src/main.cpp:677:13:void MX_GPIO_Init()	1
-../Core/Src/main.cpp:726:6:void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef*)	1
-../Core/Src/main.cpp:731:5:int __io_putchar(int)	2
-../Core/Src/main.cpp:741:5:int _write(int, char*, int)	4
-../Core/Src/main.cpp:754:6:void Timer_callback()	6
-../Core/Src/main.cpp:809:6:void Error_Handler()	1
-../Core/Src/main.cpp:822:1:void __static_initialization_and_destruction_0()	1
-../Core/Src/main.cpp:822:1:cpp)	1
+../Core/Src/main.cpp:153:6:void onHeartbeat(Heartbeat_msg_t&, void*)	1
+../Core/Src/main.cpp:166:6:void onFeedback(Get_Encoder_Estimates_msg_t&, void*)	1
+../Core/Src/main.cpp:189:5:int main()	3
+../Core/Src/main.cpp:407:6:void SystemClock_Config()	3
+../Core/Src/main.cpp:455:13:void MX_CAN1_Init()	2
+../Core/Src/main.cpp:492:13:void MX_I2C3_Init()	2
+../Core/Src/main.cpp:526:13:void MX_TIM10_Init()	1
+../Core/Src/main.cpp:562:13:void MX_TIM11_Init()	1
+../Core/Src/main.cpp:594:13:void MX_USART2_UART_Init()	1
+../Core/Src/main.cpp:648:13:void MX_USB_OTG_FS_PCD_Init()	2
+../Core/Src/main.cpp:681:13:void MX_DMA_Init()	1
+../Core/Src/main.cpp:699:13:void MX_GPIO_Init()	1
+../Core/Src/main.cpp:748:5:int __io_putchar(int)	2
+../Core/Src/main.cpp:758:5:int _write(int, char*, int)	4
+../Core/Src/main.cpp:771:6:void Timer_callback()	2
+../Core/Src/main.cpp:906:6:void Error_Handler()	1
+../Core/Src/main.cpp:919:1:void __static_initialization_and_destruction_0()	1
+../Core/Src/main.cpp:919:1:cpp)	1

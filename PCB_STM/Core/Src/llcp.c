@@ -45,14 +45,13 @@ void send_heartbeat() {
   CDC_Transmit_FS(tx_buffer, msg_len);
 }
 
-void send_imu(uint8_t id, uint8_t angle_data, uint8_t angle_drone) {
+void send_imu(uint8_t id, uint16_t angle_data) {
 	imu_msg my_msg_imu;
 	uint16_t msg_len;
 
 	my_msg_imu.id = id;
 	//my_msg_imsu.t_ms = 42;
 	my_msg_imu.angle = angle_data;
-	my_msg_imu.drone_angle = angle_drone;
 
 	// llcp_prepareMessage will fill your TX buffer
 	msg_len = llcp_prepareMessage((uint8_t*)&my_msg_imu, sizeof(my_msg_imu), tx_buffer);

@@ -40,7 +40,7 @@ extern "C" {
 
 #define RAD2DEG 		57.295f
 #define DEG2RAD 		0.01745329251f
-#define alpha 			0.98f
+#define alpha_komp_filter 			0.98f
 
 #define DIV_CON "CONNECTED\r\n"
 #define DIV_DISCON "CONNECTION ERROR\r\n"

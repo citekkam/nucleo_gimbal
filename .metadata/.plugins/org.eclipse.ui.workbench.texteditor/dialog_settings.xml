@@ -3,6 +3,10 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="false"/>
 	<list key="searchhistory">
+		<item value="alpha"/>
+		<item value="pumpEvents"/>
+		<item value="request"/>
+		<item value="HAL_CAN_ActivateNotification"/>
 		<item value="hcan"/>
 		<item value="reference_angle"/>
 		<item value="dt_float"/>
@@ -14,10 +18,6 @@
 		<item value="HAL_GPIO_WritePin"/>
 		<item value="setPosition"/>
 		<item value="HAL_PCD_DevConnect"/>
-		<item value="I2C1"/>
-		<item value="i2c1"/>
-		<item value="hi2c1"/>
-		<item value="error_position"/>
 	</list>
 	<list key="replacehistory">
 		<item value="hi2c3"/>
