@@ -1,10 +1,17 @@
-11:40:01 **** Incremental Build of configuration Debug for project PCB_STM ****
+23:48:43 **** Incremental Build of configuration Debug for project PCB_STM ****
 make -j12 all 
+arm-none-eabi-g++ "../Core/Src/main.cpp" -mcpu=cortex-m4 -std=gnu++14 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -DUSE_FULL_LL_DRIVER -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-g++ -o "PCB_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/kamil/STM32CubeIDE/workspace_1.19.0/PCB_STM/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PCB_STM.map" -Wl,--gc-sections -static -u_printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+Finished building target: PCB_STM.elf
+ 
 arm-none-eabi-size  PCB_STM.elf 
+arm-none-eabi-objdump -h -S PCB_STM.elf  > "PCB_STM.list"
    text	   data	    bss	    dec	    hex	filename
-  82328	    740	  10236	  93304	  16c78	PCB_STM.elf
+  84736	    740	  10276	  95752	  17608	PCB_STM.elf
 Finished building: default.size.stdout
  
+Finished building: PCB_STM.list
+ 
 
-11:40:02 Build Finished. 0 errors, 0 warnings. (took 132ms)
+23:48:44 Build Finished. 0 errors, 0 warnings. (took 474ms)
 

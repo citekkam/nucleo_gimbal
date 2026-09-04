@@ -212,10 +212,10 @@ int main(void)
   ICM20602_Init();
 
   // Mahony filter
-  //IMU_Init_MF(&myIMU, 0.4f, 0.0001f);
+  IMU_Init_MF(&myIMU, 0.4f, 0.0001f);
 
   // Complementary filter
-  CF_Init(&filter, 0);
+  //CF_Init(&filter, 0);
 
   odrv0.onFeedback(onFeedback, &odrv0_user_data);
   odrv0.onStatus(onHeartbeat, &odrv0_user_data);
@@ -390,10 +390,10 @@ int main(void)
 		  previous_tick = current_tick;
 
 		  // Mahony filter
-		  //IMU_Update_MF(&myIMU, gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, dt_float);
+		  IMU_Update_MF(&myIMU, gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, dt_float);
 
 		  // Complementary filter
-		  CF_Update(&filter, gyro_y, deg_XZ, dt_float);
+		  //CF_Update(&filter, gyro_y, deg_XZ, dt_float);
 
 		  send_pos = 1;
 
@@ -403,12 +403,17 @@ int main(void)
 	  if (send_pos && running) {
 
 		  send_pos = 0;
-		  Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
+
+		  // Varianta 1
+		  //Get_Encoder_Estimates_msg_t feedback = odrv0_user_data.last_feedback;
+
+
+
 		  // Mahony  filter
-		  //error_position = (-reference_angle/360.0f)-(myIMU.pitch/360.0f);
+		  error_position = (-reference_angle/360.0f)-(myIMU.pitch/360.0f);
 
 		  // Complementary filter
-		  error_position = (-reference_angle/360.0f)-(filter.angle/360.0f);
+		  //error_position = (-reference_angle/360.0f)-(filter.angle/360.0f);
 
 		  if (error_position <= -0.055f) {
 			  error_position = -0.055;
@@ -416,13 +421,23 @@ int main(void)
 			  error_position = 0.055;
 		  } else {
 		  }
+
+		  // Optional-potlaceni mikrovibraci
+		  /*
+		  if (error_position > -0.005f && error_position < 0.005f) {
+		  			  error_position = 0.0f;
+		  		  }
+		   */
+		  float Kp = 0.1f;
+		  // Varianta 1
 		  // Mahony filter
 		  //motor_position = feedback.Pos_Estimate + error_position;
 
 		  // Complementary filter
-		  motor_position = feedback.Pos_Estimate - error_position;
+		  //motor_position = feedback.Pos_Estimate - error_position;
 
-		  //motor_position = feedback.Pos_Estimate + ((-reference_angle/360.0f)-(myIMU.pitch/360.0f));
+		  motor_position += (error_position * Kp);
+
 		  if (motor_position >= -0.25 && motor_position <=0.25) {
 			odrv0.setPosition(motor_position, 0.0, 0.0);
 		  }
@@ -752,10 +767,10 @@ void feedback_callback()
 {
 	if (send_data) {
 		// Mahony filter
-		//send_imu(57, (int16_t)(myIMU.pitch*100.0f));
+		send_imu(57, (int16_t)(myIMU.pitch*100.0f));
 
 		// Complementary filter
-		send_imu(57, (int16_t)(filter.angle*100.0f));
+		//send_imu(57, (int16_t)(filter.angle*100.0f));
 	}
 }
 

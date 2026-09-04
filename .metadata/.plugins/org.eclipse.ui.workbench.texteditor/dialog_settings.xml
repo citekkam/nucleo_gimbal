@@ -3,6 +3,7 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="false"/>
 	<list key="searchhistory">
+		<item value="send_imu"/>
 		<item value="alpha"/>
 		<item value="pumpEvents"/>
 		<item value="request"/>
@@ -17,7 +18,6 @@
 		<item value="CF_Update"/>
 		<item value="HAL_GPIO_WritePin"/>
 		<item value="setPosition"/>
-		<item value="HAL_PCD_DevConnect"/>
 	</list>
 	<list key="replacehistory">
 		<item value="hi2c3"/>

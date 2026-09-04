@@ -45,7 +45,7 @@ void send_heartbeat() {
   CDC_Transmit_FS(tx_buffer, msg_len);
 }
 
-void send_imu(uint8_t id, uint16_t angle_data) {
+void send_imu(uint8_t id, int16_t angle_data) {
 	imu_msg my_msg_imu;
 	uint16_t msg_len;
 
